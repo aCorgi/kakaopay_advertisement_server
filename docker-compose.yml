@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0.42
+    container_name: mysql-local
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: kakaopay
+      MYSQL_DATABASE: kakaopay
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:7
+    container_name: redis-local
+    restart: always
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # 메시지 통신용 (AMQP)
+      - "15672:15672"   # 관리 UI 접속용
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: kakaopay
+    restart: always
