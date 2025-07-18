@@ -17,8 +17,8 @@ import jakarta.persistence.Table
 class Advertisement(
     @Column(nullable = false, length = 200)
     val name: String,
-    @Column(nullable = false, length = 200)
-    val rewardAmount: String,
+    @Column(nullable = false)
+    val rewardAmount: Int,
     @Column(nullable = false)
     val participationCount: Int,
     @Column(nullable = false, length = 1000)
