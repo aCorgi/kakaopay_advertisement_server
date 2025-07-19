@@ -55,3 +55,10 @@ aes:
   iv-size: 16
   secret-key: "0123456789abcdef0123456789fedcba"
   algorithm: "AES/CBC/PKCS5Padding"
+
+---
+api:
+  reward-internal:
+    base-url: http://localhost:8090
+    username: kakaopay
+    password: blabla
