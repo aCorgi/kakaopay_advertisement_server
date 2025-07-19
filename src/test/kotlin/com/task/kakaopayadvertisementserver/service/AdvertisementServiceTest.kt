@@ -2,10 +2,16 @@ package com.task.kakaopayadvertisementserver.service
 
 import com.task.kakaopayadvertisementserver.config.UnitTestBase
 import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
+import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
+import com.task.kakaopayadvertisementserver.util.Constants.MAX_PAGE_SIZE
+import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
+import com.task.kakaopayadvertisementserver.util.MockEntity
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -16,6 +22,9 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import java.time.LocalDateTime
 import kotlin.test.Test
 
 class AdvertisementServiceTest : UnitTestBase() {
@@ -83,6 +92,65 @@ class AdvertisementServiceTest : UnitTestBase() {
 
                 verify(advertisementRepository, never())
                     .save(any())
+            }
+        }
+    }
+
+    @Nested
+    inner class `광고 페이징 조회` {
+        @Nested
+        inner class `성공` {
+            @Test
+            fun `요청받은 페이지와 사이즈로 광고를 조회한다`() {
+                // given
+                val nowAt = LocalDateTime.now()
+                val page = 0
+                val size = 10
+                val pageable = PageRequest.of(page, size)
+                val advertisements =
+                    listOf(
+                        MockEntity.MockAdvertisement.of(name = "광고1", participationCount = 20),
+                        MockEntity.MockAdvertisement.of(name = "광고2", participationCount = 12),
+                    )
+                val pagedAdvertisements = PageImpl(advertisements)
+
+                whenever(
+                    advertisementRepository.findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+                        pageable = pageable,
+                        startAt = nowAt,
+                        endAt = nowAt,
+                        participationCount = MIN_PARTICIPATION_COUNT,
+                    ),
+                ).thenReturn(pagedAdvertisements)
+
+                // when
+                val result =
+                    assertDoesNotThrow {
+                        advertisementService.findPagedAdvertisements(page, size, nowAt)
+                    }
+
+                // then
+                assertSoftly {
+                    it.assertThat(result.content).hasSize(2)
+                    it.assertThat(result.content[0]).isEqualTo(AdvertisementResponse(advertisements[0]))
+                    it.assertThat(result.content[1]).isEqualTo(AdvertisementResponse(advertisements[1]))
+                }
+            }
+        }
+
+        @Nested
+        inner class `실패` {
+            @DisplayName("요구 사항에 따르면, $MAX_PAGE_SIZE 이하의 페이지 사이즈만 허용된다.")
+            @Test
+            fun `페이지 사이즈가 최대 허용 크기를 초과하면 예외를 반환한다`() {
+                // given
+                val page = 0
+                val size = MAX_PAGE_SIZE + 100 // 초과된 사이즈
+
+                // when & then
+                assertThrows<ClientBadRequestException> {
+                    advertisementService.findPagedAdvertisements(page, size, LocalDateTime.now())
+                }
             }
         }
     }
