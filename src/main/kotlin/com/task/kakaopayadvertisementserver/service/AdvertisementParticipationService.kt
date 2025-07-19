@@ -10,6 +10,7 @@ import com.task.kakaopayadvertisementserver.repository.AdvertisementParticipatio
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -33,9 +34,10 @@ class AdvertisementParticipationService(
             throw ClientBadRequestException("시작 시간은 종료 시간보다 같거나 이전이어야 합니다. (시작 시간: $startAt, 종료 시간: $endAt)")
         }
 
-        val pageable = PageRequest.of(page, size)
+        val sort = Sort.by(Sort.Direction.ASC, AdvertisementParticipation::createdAt.name)
+        val pageable = PageRequest.of(page, size, sort)
         val pagedAdvertisementParticipation =
-            advertisementParticipationRepository.findByMemberIdAndCreatedAtBetweenOrderByCreatedAtAsc(
+            advertisementParticipationRepository.findByMemberIdAndCreatedAtBetween(
                 pageable = pageable,
                 memberId = memberId,
                 startAt = startAt,

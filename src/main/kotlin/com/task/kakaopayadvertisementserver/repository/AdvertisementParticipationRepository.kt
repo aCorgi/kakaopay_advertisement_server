@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
 
 interface AdvertisementParticipationRepository : JpaRepository<AdvertisementParticipation, Int> {
-    fun findByMemberIdAndCreatedAtBetweenOrderByCreatedAtAsc(
+    fun findByMemberIdAndCreatedAtBetween(
         pageable: Pageable,
         memberId: Int,
         startAt: LocalDateTime,

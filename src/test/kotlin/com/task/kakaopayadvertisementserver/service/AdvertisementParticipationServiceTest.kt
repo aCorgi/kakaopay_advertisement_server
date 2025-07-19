@@ -1,6 +1,7 @@
 package com.task.kakaopayadvertisementserver.service
 
 import com.task.kakaopayadvertisementserver.config.UnitTestBase
+import com.task.kakaopayadvertisementserver.domain.entity.AdvertisementParticipation
 import com.task.kakaopayadvertisementserver.dto.AdvertisementParticipationResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementParticipationRepository
@@ -18,6 +19,7 @@ import org.mockito.kotlin.whenever
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.LocalDateTime
 import kotlin.test.Test
 
@@ -54,16 +56,16 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
                         MockAdvertisement.of(id = 2515, name = "광고2"),
                         MockAdvertisement.of(id = 2515333, name = "광고3"),
                     )
-                val startAt = LocalDateTime.now().minusDays(1)
-                val endAt = LocalDateTime.now()
-                val pageable = PageRequest.of(page, size)
+                val (startAt, endAt) = nowAt.minusDays(1) to nowAt.plusDays(2)
+                val sort = Sort.by(Sort.Direction.ASC, AdvertisementParticipation::createdAt.name)
+                val pageable = PageRequest.of(page, size, sort)
 
                 val advertisementParticipations =
                     listOf(
                         MockAdvertisementParticipation.of(
                             member = member,
                             advertisement = advertisements[0],
-                            createdAt = nowAt.minusDays(3),
+                            createdAt = nowAt.minusDays(1),
                         ),
                         MockAdvertisementParticipation.of(
                             member = member,
@@ -73,13 +75,18 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
                         MockAdvertisementParticipation.of(
                             member = member,
                             advertisement = advertisements[2],
-                            createdAt = nowAt.minusDays(1),
+                            createdAt = nowAt.minusDays(3),
                         ),
                     )
-                val pagedAdvertisementParticipations = PageImpl(advertisementParticipations)
+                val pagedAdvertisementParticipations =
+                    PageImpl(
+                        advertisementParticipations.sortedBy { it.createdAt },
+                        pageable,
+                        advertisementParticipations.size.toLong(),
+                    )
 
                 whenever(
-                    advertisementParticipationRepository.findByMemberIdAndCreatedAtBetweenOrderByCreatedAtAsc(
+                    advertisementParticipationRepository.findByMemberIdAndCreatedAtBetween(
                         pageable = pageable,
                         memberId = member.id,
                         startAt = startAt,
@@ -102,9 +109,9 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
                 // then
                 assertSoftly {
                     it.assertThat(result.content).hasSize(3)
-                    it.assertThat(result.content[0]).isEqualTo(AdvertisementParticipationResponse(advertisementParticipations[0]))
+                    it.assertThat(result.content[0]).isEqualTo(AdvertisementParticipationResponse(advertisementParticipations[2]))
                     it.assertThat(result.content[1]).isEqualTo(AdvertisementParticipationResponse(advertisementParticipations[1]))
-                    it.assertThat(result.content[2]).isEqualTo(AdvertisementParticipationResponse(advertisementParticipations[2]))
+                    it.assertThat(result.content[2]).isEqualTo(AdvertisementParticipationResponse(advertisementParticipations[0]))
                 }
             }
         }

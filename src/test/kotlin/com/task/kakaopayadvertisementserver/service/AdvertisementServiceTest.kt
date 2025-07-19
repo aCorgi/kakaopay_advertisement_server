@@ -10,6 +10,7 @@ import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -22,6 +23,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.LocalDateTime
 import kotlin.test.Test
 
@@ -98,22 +100,29 @@ class AdvertisementServiceTest : UnitTestBase() {
     inner class `광고 페이징 조회` {
         @Nested
         inner class `성공` {
+            @DisplayName("페이징 조회 시 보상 금액 기준으로 내림차순 정렬된 광고를 조회한다.")
             @Test
             fun `요청받은 페이지와 사이즈로 광고를 조회한다`() {
                 // given
                 val nowAt = LocalDateTime.now()
                 val page = 0
                 val size = 10
-                val pageable = PageRequest.of(page, size)
+                val sort = Sort.by(Sort.Direction.DESC, Advertisement::rewardAmount.name)
+                val pageable = PageRequest.of(page, size, sort)
                 val advertisements =
                     listOf(
-                        MockAdvertisement.of(name = "광고1", maxParticipationCount = 20),
-                        MockAdvertisement.of(name = "광고2", maxParticipationCount = 12),
+                        MockAdvertisement.of(name = "광고1", maxParticipationCount = 20, rewardAmount = 200),
+                        MockAdvertisement.of(name = "광고2", maxParticipationCount = 12, rewardAmount = 500),
                     )
-                val pagedAdvertisements = PageImpl(advertisements)
+                val pagedAdvertisements =
+                    PageImpl(
+                        advertisements.sortedByDescending { it.rewardAmount },
+                        pageable,
+                        advertisements.size.toLong(),
+                    )
 
                 whenever(
-                    advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+                    advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqual(
                         pageable = pageable,
                         startAt = nowAt,
                         endAt = nowAt,
@@ -130,8 +139,8 @@ class AdvertisementServiceTest : UnitTestBase() {
                 // then
                 assertSoftly {
                     it.assertThat(result.content).hasSize(2)
-                    it.assertThat(result.content[0]).isEqualTo(AdvertisementResponse(advertisements[0]))
-                    it.assertThat(result.content[1]).isEqualTo(AdvertisementResponse(advertisements[1]))
+                    it.assertThat(result.content[0]).isEqualTo(AdvertisementResponse(advertisements[1]))
+                    it.assertThat(result.content[1]).isEqualTo(AdvertisementResponse(advertisements[0]))
                 }
             }
         }

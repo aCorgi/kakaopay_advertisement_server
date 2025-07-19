@@ -8,6 +8,7 @@ import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,12 +28,13 @@ class AdvertisementService(
         size: Int,
         nowAt: LocalDateTime,
     ): Page<AdvertisementResponse> {
-        val pageable = PageRequest.of(page, size)
+        val sort = Sort.by(Sort.Direction.DESC, Advertisement::rewardAmount.name)
+        val pageable = PageRequest.of(page, size, sort)
 
         // TODO: 참가 가능한 광고 여 부 (선택사항) 대응
         // TODO: queryDSL 을 사용해서 maxParticipationCount > currentParticipationCount 인 광고만 조회하도록 개선
         val pagedAdvertisements =
-            advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+            advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqual(
                 pageable = pageable,
                 startAt = nowAt,
                 endAt = nowAt,
