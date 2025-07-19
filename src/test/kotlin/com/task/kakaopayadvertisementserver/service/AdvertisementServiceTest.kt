@@ -6,8 +6,8 @@ import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
+import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
-import com.task.kakaopayadvertisementserver.util.MockEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.Nested
@@ -107,8 +107,8 @@ class AdvertisementServiceTest : UnitTestBase() {
                 val pageable = PageRequest.of(page, size)
                 val advertisements =
                     listOf(
-                        MockEntity.MockAdvertisement.of(name = "광고1", participationCount = 20),
-                        MockEntity.MockAdvertisement.of(name = "광고2", participationCount = 12),
+                        MockAdvertisement.of(name = "광고1", maxParticipationCount = 20),
+                        MockAdvertisement.of(name = "광고2", maxParticipationCount = 12),
                     )
                 val pagedAdvertisements = PageImpl(advertisements)
 

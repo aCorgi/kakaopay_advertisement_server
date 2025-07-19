@@ -37,7 +37,7 @@ class AdvertisementController(
     @GetMapping
     fun findPagedAdvertisements(
         @RequestParam(defaultValue = "$DEFAULT_PAGE") @Min(0) page: Int,
-        @RequestParam(defaultValue = "$MAX_ADVERTISEMENT_PAGE_SIZE") @Min(1) @Max(MAX_ADVERTISEMENT_PAGE_SIZE) size: Int,
+        @RequestParam(defaultValue = "$MAX_ADVERTISEMENT_PAGE_SIZE") @Min(1) @Max(MAX_ADVERTISEMENT_PAGE_SIZE.toLong()) size: Int,
     ) {
         advertisementService.findPagedAdvertisement(page, size, LocalDateTime.now())
     }

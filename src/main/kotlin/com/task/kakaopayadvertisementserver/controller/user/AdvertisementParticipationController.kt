@@ -32,7 +32,7 @@ class AdvertisementParticipationController(
         @RequestParam(defaultValue = "$DEFAULT_PAGE") @Min(0) page: Int,
         @RequestParam(defaultValue = "$MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE")
         @Min(1)
-        @Max(MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE)
+        @Max(MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE.toLong())
         size: Int,
         @AuthenticationPrincipal kakaopayMember: KakaopayMember,
         @RequestParam startAt: LocalDateTime,

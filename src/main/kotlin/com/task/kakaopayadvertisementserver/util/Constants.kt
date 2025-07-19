@@ -9,8 +9,8 @@ object Constants {
     const val AES_ALGORITHM = "AES"
 
     object Page {
-        const val MAX_ADVERTISEMENT_PAGE_SIZE = 10L
-        const val MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE = 50L
+        const val MAX_ADVERTISEMENT_PAGE_SIZE = 10
+        const val MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE = 50
         const val DEFAULT_PAGE = 0L
     }
 
