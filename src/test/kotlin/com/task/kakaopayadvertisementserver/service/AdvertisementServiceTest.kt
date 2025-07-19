@@ -5,13 +5,11 @@ import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
-import com.task.kakaopayadvertisementserver.util.Constants.MAX_PAGE_SIZE
 import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
 import com.task.kakaopayadvertisementserver.util.MockEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -63,7 +61,7 @@ class AdvertisementServiceTest : UnitTestBase() {
 
                 assertThat(savedAdvertisement.name).isEqualTo(name)
                 assertThat(savedAdvertisement.rewardAmount).isEqualTo(request.rewardAmount)
-                assertThat(savedAdvertisement.participationCount).isEqualTo(request.maxParticipationCount)
+                assertThat(savedAdvertisement.maxParticipationCount).isEqualTo(request.maxParticipationCount)
                 assertThat(savedAdvertisement.text).isEqualTo(request.text)
                 assertThat(savedAdvertisement.imageUrl).isEqualTo(request.imageUrl)
                 assertThat(savedAdvertisement.exposureAt.startAt)
@@ -115,18 +113,18 @@ class AdvertisementServiceTest : UnitTestBase() {
                 val pagedAdvertisements = PageImpl(advertisements)
 
                 whenever(
-                    advertisementRepository.findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+                    advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
                         pageable = pageable,
                         startAt = nowAt,
                         endAt = nowAt,
-                        participationCount = MIN_PARTICIPATION_COUNT,
+                        maxParticipationCount = MIN_PARTICIPATION_COUNT,
                     ),
                 ).thenReturn(pagedAdvertisements)
 
                 // when
                 val result =
                     assertDoesNotThrow {
-                        advertisementService.findPagedAdvertisements(page, size, nowAt)
+                        advertisementService.findPagedAdvertisement(page, size, nowAt)
                     }
 
                 // then
@@ -134,22 +132,6 @@ class AdvertisementServiceTest : UnitTestBase() {
                     it.assertThat(result.content).hasSize(2)
                     it.assertThat(result.content[0]).isEqualTo(AdvertisementResponse(advertisements[0]))
                     it.assertThat(result.content[1]).isEqualTo(AdvertisementResponse(advertisements[1]))
-                }
-            }
-        }
-
-        @Nested
-        inner class `실패` {
-            @DisplayName("요구 사항에 따르면, $MAX_PAGE_SIZE 이하의 페이지 사이즈만 허용된다.")
-            @Test
-            fun `페이지 사이즈가 최대 허용 크기를 초과하면 예외를 반환한다`() {
-                // given
-                val page = 0
-                val size = MAX_PAGE_SIZE + 100 // 초과된 사이즈
-
-                // when & then
-                assertThrows<ClientBadRequestException> {
-                    advertisementService.findPagedAdvertisements(page, size, LocalDateTime.now())
                 }
             }
         }

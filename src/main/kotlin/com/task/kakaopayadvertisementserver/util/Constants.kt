@@ -8,7 +8,12 @@ object Constants {
 
     const val AES_ALGORITHM = "AES"
 
-    const val MAX_PAGE_SIZE = 10
+    object Page {
+        const val MAX_ADVERTISEMENT_PAGE_SIZE = 10L
+        const val MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE = 50L
+        const val DEFAULT_PAGE = 0L
+    }
+
     const val MIN_PARTICIPATION_COUNT = 1
 
     object Redis {
