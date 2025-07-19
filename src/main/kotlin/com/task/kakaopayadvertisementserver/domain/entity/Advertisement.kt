@@ -2,6 +2,7 @@ package com.task.kakaopayadvertisementserver.domain.entity
 
 import com.task.kakaopayadvertisementserver.domain.BaseEntity
 import com.task.kakaopayadvertisementserver.domain.embeddable.ExposureAt
+import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -20,7 +21,8 @@ class Advertisement(
     @Column(nullable = false)
     val rewardAmount: Int,
     @Column(nullable = false)
-    val participationCount: Int,
+    val maxParticipationCount: Int,
+    currentParticipationCount: Int,
     @Column(nullable = false, length = 1000)
     val text: String,
     @Column(nullable = false, length = 500)
@@ -28,7 +30,23 @@ class Advertisement(
     @Embedded
     val exposureAt: ExposureAt,
 //    participationEligibility: ParticipationEligibility,
-) : BaseEntity()
+) : BaseEntity() {
+    @Column(nullable = false)
+    var currentParticipationCount: Int = currentParticipationCount
+        protected set
+
+    fun increaseParticipationCount() {
+        validateParticipationLimit()
+
+        currentParticipationCount += 1
+    }
+
+    fun validateParticipationLimit() {
+        if (maxParticipationCount <= currentParticipationCount) {
+            throw ClientBadRequestException("참여 가능 횟수를 초과했습니다. (최대 참여 횟수: $maxParticipationCount, 현재 참여 횟수: $currentParticipationCount)")
+        }
+    }
+}
 
 // @Converter(autoApply = true)
 // class BookingStateConverter : EnumColumnConverter<ParticipationEligibility>(ParticipationEligibility::class.java)

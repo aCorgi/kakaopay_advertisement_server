@@ -63,7 +63,7 @@ class AdvertisementServiceTest : UnitTestBase() {
 
                 assertThat(savedAdvertisement.name).isEqualTo(name)
                 assertThat(savedAdvertisement.rewardAmount).isEqualTo(request.rewardAmount)
-                assertThat(savedAdvertisement.participationCount).isEqualTo(request.participationCount)
+                assertThat(savedAdvertisement.participationCount).isEqualTo(request.maxParticipationCount)
                 assertThat(savedAdvertisement.text).isEqualTo(request.text)
                 assertThat(savedAdvertisement.imageUrl).isEqualTo(request.imageUrl)
                 assertThat(savedAdvertisement.exposureAt.startAt)

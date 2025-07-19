@@ -1,7 +1,7 @@
 package com.task.kakaopayadvertisementserver.config.security
 
 import com.task.kakaopayadvertisementserver.exception.UnauthorizedException
-import com.task.kakaopayadvertisementserver.repository.MemberRepository
+import com.task.kakaopayadvertisementserver.service.MemberService
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -13,13 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 class BasicAuthenticationProvider(
     private val passwordEncoder: PasswordEncoder,
-    private val memberRepository: MemberRepository,
+    private val memberService: MemberService,
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication): Authentication {
         val email = authentication.name
         val password = authentication.credentials.toString()
 
-        memberRepository.findByEmail(email)
+        // TODO: 어필) 이상적으론 어드민과 사용자 서버 및 DB 분리, JWT 토큰 사용. 하나의 과제에서 대응하기 위해 Basic auth + 단일 테이블 활용
+        memberService.findByEmailOrNull(email)
             ?.let { member ->
                 if (passwordEncoder.matches(password, member.password)) {
                     val userDetails =

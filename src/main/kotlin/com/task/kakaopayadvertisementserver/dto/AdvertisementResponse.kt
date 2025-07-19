@@ -10,7 +10,7 @@ data class AdvertisementResponse(
     val imageUrl: String,
     val exposureAt: ExposureAt,
     val rewardAmount: Int,
-    val participationCount: Int,
+    val maxParticipationCount: Int,
 ) {
     constructor(entity: Advertisement) : this(
         id = entity.id,
@@ -19,6 +19,6 @@ data class AdvertisementResponse(
         imageUrl = entity.imageUrl,
         exposureAt = entity.exposureAt,
         rewardAmount = entity.rewardAmount,
-        participationCount = entity.participationCount,
+        maxParticipationCount = entity.maxParticipationCount,
     )
 }

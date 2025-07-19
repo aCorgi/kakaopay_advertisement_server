@@ -9,10 +9,10 @@ import java.time.LocalDateTime
 interface AdvertisementRepository : JpaRepository<Advertisement, Int> {
     fun findByName(name: String): Advertisement?
 
-    fun findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+    fun findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
         pageable: Pageable,
         startAt: LocalDateTime,
         endAt: LocalDateTime,
-        participationCount: Int,
+        maxParticipationCount: Int,
     ): Page<Advertisement>
 }

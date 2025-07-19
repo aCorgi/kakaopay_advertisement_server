@@ -25,7 +25,7 @@ class AdvertisementParticipationController(
     ) {
         advertisementParticipationService.participateAdvertisement(
             request = request,
-            userId = kakaopayMember.id,
+            memberId = kakaopayMember.id,
         )
     }
 }

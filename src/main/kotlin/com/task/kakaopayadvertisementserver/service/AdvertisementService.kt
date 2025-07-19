@@ -1,5 +1,6 @@
 package com.task.kakaopayadvertisementserver.service
 
+import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.dto.AdvertisementCreationRequest
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
@@ -8,6 +9,7 @@ import com.task.kakaopayadvertisementserver.util.Constants.MAX_PAGE_SIZE
 import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -17,6 +19,10 @@ import java.time.LocalDateTime
 class AdvertisementService(
     private val advertisementRepository: AdvertisementRepository,
 ) {
+    fun findByIdOrNull(id: Int): Advertisement? {
+        return advertisementRepository.findByIdOrNull(id)
+    }
+
     fun findPagedAdvertisements(
         page: Int,
         size: Int,
@@ -29,12 +35,13 @@ class AdvertisementService(
         }
 
         // TODO: 참가 가능한 광고 여 부 (선택사항) 대응
+        // TODO: queryDSL 을 사용해서 maxParticipationCount > currentParticipationCount 인 광고만 조회하도록 개선
         val pagedAdvertisements =
-            advertisementRepository.findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+            advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
                 pageable = pageable,
                 startAt = nowAt,
                 endAt = nowAt,
-                participationCount = MIN_PARTICIPATION_COUNT,
+                maxParticipationCount = MIN_PARTICIPATION_COUNT,
             )
 
         return pagedAdvertisements.map { AdvertisementResponse(it) }

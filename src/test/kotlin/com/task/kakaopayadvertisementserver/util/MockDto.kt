@@ -21,7 +21,7 @@ object MockDto {
         return AdvertisementCreationRequest(
             name = name,
             rewardAmount = rewardAmount,
-            participationCount = participationCount,
+            maxParticipationCount = participationCount,
             text = text,
             imageUrl = imageUrl,
             exposureAt = exposureAt,

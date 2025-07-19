@@ -1,0 +1,6 @@
+package com.task.kakaopayadvertisementserver.repository
+
+import com.task.kakaopayadvertisementserver.domain.entity.AdvertisementParticipation
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface AdvertisementParticipationRepository : JpaRepository<AdvertisementParticipation, Int>

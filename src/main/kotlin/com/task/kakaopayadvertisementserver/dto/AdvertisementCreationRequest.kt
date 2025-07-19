@@ -11,7 +11,7 @@ data class AdvertisementCreationRequest(
     @field:Min(1)
     val rewardAmount: Int,
     @field:Min(1)
-    val participationCount: Int,
+    val maxParticipationCount: Int,
     val text: String,
     val imageUrl: String,
     val exposureAt: ExposureAtDto,
@@ -20,7 +20,8 @@ data class AdvertisementCreationRequest(
         return Advertisement(
             name = name,
             rewardAmount = rewardAmount,
-            participationCount = participationCount,
+            maxParticipationCount = maxParticipationCount,
+            currentParticipationCount = 0,
             text = text,
             imageUrl = imageUrl,
             exposureAt = exposureAt.toEmbeddable(),
