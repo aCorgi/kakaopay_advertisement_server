@@ -13,6 +13,6 @@ interface AdvertisementRepository : JpaRepository<Advertisement, Int> {
         pageable: Pageable,
         startAt: LocalDateTime,
         endAt: LocalDateTime,
-        participationCount: Int
+        participationCount: Int,
     ): Page<Advertisement>
 }

@@ -12,13 +12,13 @@ data class AdvertisementResponse(
     val rewardAmount: Int,
     val participationCount: Int,
 ) {
-    constructor(entity: Advertisement): this(
+    constructor(entity: Advertisement) : this(
         id = entity.id,
         name = entity.name,
         text = entity.text,
         imageUrl = entity.imageUrl,
         exposureAt = entity.exposureAt,
         rewardAmount = entity.rewardAmount,
-        participationCount = entity.participationCount
+        participationCount = entity.participationCount,
     )
 }

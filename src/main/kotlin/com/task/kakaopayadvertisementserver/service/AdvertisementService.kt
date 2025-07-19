@@ -20,8 +20,8 @@ class AdvertisementService(
     fun findPagedAdvertisements(
         page: Int,
         size: Int,
+        nowAt: LocalDateTime,
     ): Page<AdvertisementResponse> {
-        val nowAt = LocalDateTime.now()
         val pageable = PageRequest.of(page, size)
 
         if (size > MAX_PAGE_SIZE) {
@@ -29,12 +29,13 @@ class AdvertisementService(
         }
 
         // TODO: 참가 가능한 광고 여 부 (선택사항) 대응
-        val pagedAdvertisements = advertisementRepository.findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
-            pageable = pageable,
-            startAt = nowAt,
-            endAt = nowAt,
-            participationCount = MIN_PARTICIPATION_COUNT, // TODO: 실제 참여 수로 변경 필요
-        )
+        val pagedAdvertisements =
+            advertisementRepository.findByExposureAtBetweenAndParticipationCountGreaterThanEqualOrderByRewardAmountDesc(
+                pageable = pageable,
+                startAt = nowAt,
+                endAt = nowAt,
+                participationCount = MIN_PARTICIPATION_COUNT,
+            )
 
         return pagedAdvertisements.map { AdvertisementResponse(it) }
     }
