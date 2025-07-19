@@ -10,4 +10,9 @@ object Constants {
 
     const val MAX_PAGE_SIZE = 10
     const val MIN_PARTICIPATION_COUNT = 1
+
+    object Redis {
+        const val BASIC_AUTH_USERS_REDIS_KEY = "BASIC_AUTH_USERS"
+        const val BASIC_AUTH_USERS_CHANNEL = "BASIC_AUTH_USERS"
+    }
 }
