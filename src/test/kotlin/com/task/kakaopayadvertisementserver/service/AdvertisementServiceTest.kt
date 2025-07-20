@@ -5,7 +5,6 @@ import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
-import com.task.kakaopayadvertisementserver.util.Constants.MIN_PARTICIPATION_COUNT
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
 import org.assertj.core.api.Assertions.assertThat
@@ -97,12 +96,12 @@ class AdvertisementServiceTest : UnitTestBase() {
     }
 
     @Nested
-    inner class `광고 페이징 조회` {
+    inner class `유저 노출 광고 목록 조회` {
         @Nested
         inner class `성공` {
-            @DisplayName("페이징 조회 시 보상 금액 기준으로 내림차순 정렬된 광고를 조회한다.")
+            @DisplayName("보상 금액 기준으로 내림차순 정렬된 광고를 최대 10개 목록 조회한다.")
             @Test
-            fun `요청받은 페이지와 사이즈로 광고를 조회한다`() {
+            fun `요청한 시간 기준으로 목록 조회한다`() {
                 // given
                 val nowAt = LocalDateTime.now()
                 val page = 0
@@ -122,11 +121,9 @@ class AdvertisementServiceTest : UnitTestBase() {
                     )
 
                 whenever(
-                    advertisementRepository.findByExposureAtBetweenAndMaxParticipationCountGreaterThanEqual(
+                    advertisementRepository.findPagedAvailableAndVisibleAdvertisements(
                         pageable = pageable,
-                        startAt = nowAt,
-                        endAt = nowAt,
-                        maxParticipationCount = MIN_PARTICIPATION_COUNT,
+                        nowAt = nowAt,
                     ),
                 ).thenReturn(pagedAdvertisements)
 

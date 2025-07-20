@@ -1,4 +1,5 @@
 val testContainersVersion: String by project
+val querydslVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -41,6 +42,11 @@ dependencies {
     implementation("org.redisson:redisson-spring-boot-starter:3.50.0")
 
     implementation("ca.pjer:logback-awslogs-appender:1.4.0")
+
+    // Querydsl
+    implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")
+    implementation("com.querydsl:querydsl-sql:$querydslVersion")
+    kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
 
     // phone number validation
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.5")

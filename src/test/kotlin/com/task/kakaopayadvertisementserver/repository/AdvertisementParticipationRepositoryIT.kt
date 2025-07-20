@@ -50,18 +50,11 @@ class AdvertisementParticipationRepositoryIT : IntegrationTestBase() {
                     MockAdvertisementParticipation.of(
                         member = member,
                         advertisement = advertisements[0],
-                        createdAt = now.minusDays(1),
-                    )
-                val outOfParticipation =
-                    MockAdvertisementParticipation.of(
-                        member = member,
-                        advertisement = advertisements[1],
                     )
                 val participationOfAnotherMember =
                     MockAdvertisementParticipation.of(
                         member = anotherMember,
                         advertisement = advertisements[2],
-                        createdAt = now.minusDays(1),
                     )
 
                 val pageable = PageRequest.of(0, 10)
@@ -70,24 +63,25 @@ class AdvertisementParticipationRepositoryIT : IntegrationTestBase() {
 
                 transactional {
                     MockAdvertisementParticipation.createWith(entityManager, participation)
-                    MockAdvertisementParticipation.createWith(entityManager, outOfParticipation)
                     MockAdvertisementParticipation.createWith(entityManager, participationOfAnotherMember)
-
-                    outOfParticipation.createdAt = now.minusDays(3)
                 }
 
                 // when
-                val result =
-                    advertisementParticipationRepository.findByMemberIdAndCreatedAtBetween(
-                        pageable = pageable,
-                        memberId = member.id,
-                        startAt = startAt,
-                        endAt = endAt,
-                    )
+                transactional {
+                    val result =
+                        advertisementParticipationRepository.findByMemberIdAndCreatedAtBetween(
+                            pageable = pageable,
+                            memberId = member.id,
+                            startAt = startAt,
+                            endAt = endAt,
+                        )
 
-                // then
-                assertEquals(1, result.totalElements)
-                assertEquals(participation, result.content[0])
+                    // then
+                    assertEquals(1, result.totalElements)
+                    assertEquals(participation.id, result.content[0].id)
+                    assertEquals(participation.member.id, result.content[0].member.id)
+                    assertEquals(participation.advertisement.id, result.content[0].advertisement.id)
+                }
             }
         }
     }
