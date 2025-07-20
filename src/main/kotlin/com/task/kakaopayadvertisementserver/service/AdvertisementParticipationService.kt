@@ -1,6 +1,8 @@
 package com.task.kakaopayadvertisementserver.service
 
+import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.domain.entity.AdvertisementParticipation
+import com.task.kakaopayadvertisementserver.domain.entity.Member
 import com.task.kakaopayadvertisementserver.dto.AdvertisementParticipationRequest
 import com.task.kakaopayadvertisementserver.dto.AdvertisementParticipationResponse
 import com.task.kakaopayadvertisementserver.dto.event.AdvertisementParticipationCompletedEvent
@@ -22,6 +24,7 @@ class AdvertisementParticipationService(
     private val advertisementService: AdvertisementService,
     private val advertisementParticipationRepository: AdvertisementParticipationRepository,
     private val memberService: MemberService,
+    private val lockService: LockService,
 ) {
     fun findPagedAdvertisementParticipations(
         page: Int,
@@ -62,7 +65,21 @@ class AdvertisementParticipationService(
         advertisement.validateParticipationLimit()
 
         // TODO: 어필) Redisson 분산락 (광고ID 단위)
+        lockService.runWithLock(
+            lockName = "participate-advertisement:${request.advertisementId}",
+        ) {
+            participateAdvertisementWithLock(
+                advertisement = advertisement,
+                member = member,
+            )
+        }
+            ?: throw ClientBadRequestException("이미 다른 사용자가 광고 참여 중입니다. 잠시 후 다시 시도해주세요.")
+    }
 
+    private fun participateAdvertisementWithLock(
+        advertisement: Advertisement,
+        member: Member,
+    ) {
         val advertisementParticipation =
             AdvertisementParticipation(
                 advertisement = advertisement,
@@ -83,11 +100,9 @@ class AdvertisementParticipationService(
 
         eventPublisher.publishEvent(
             AdvertisementParticipationCompletedEvent(
-                memberId = memberId,
+                memberId = member.id,
                 point = advertisement.rewardAmount,
             ),
         )
-
-        // TODO: 락 해제
     }
 }

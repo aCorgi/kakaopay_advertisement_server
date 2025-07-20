@@ -39,6 +39,9 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
     @Mock
     private lateinit var memberService: MemberService
 
+    @Mock
+    private lateinit var lockService: LockService
+
     @Nested
     inner class `광고 참여 이력 페이징 조회` {
         @Nested

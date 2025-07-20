@@ -19,5 +19,8 @@ object Constants {
     object Redis {
         const val BASIC_AUTH_USERS_REDIS_KEY = "BASIC_AUTH_USERS"
         const val BASIC_AUTH_USERS_CHANNEL = "BASIC_AUTH_USERS"
+
+        const val LOCK_WAIT_TIME_IN_SECONDS = 5L
+        const val LOCK_LEASE_TIME_IN_SECONDS = 30L
     }
 }
