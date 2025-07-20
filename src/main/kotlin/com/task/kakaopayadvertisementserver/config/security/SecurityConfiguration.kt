@@ -27,9 +27,9 @@ class SecurityConfiguration(
                 authorize
                     .requestMatchers(*permitUris())
                     .permitAll()
-                    .requestMatchers("/admins/**")
+                    .requestMatchers("/admin/**")
                     .hasAuthority(KakaopayMemberAuthority.ADMIN.authority)
-                    .requestMatchers("/users/**")
+                    .requestMatchers("/user/**")
                     .hasAuthority(KakaopayMemberAuthority.USER.authority)
                     .anyRequest()
                     .authenticated()
