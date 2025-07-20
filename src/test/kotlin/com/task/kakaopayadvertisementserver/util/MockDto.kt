@@ -9,7 +9,7 @@ object MockDto {
     fun getMockAdvertisementCreationRequest(
         name: String = "카카오페이 광고",
         rewardAmount: Int = createRandomPositiveInteger(),
-        participationCount: Int = createRandomPositiveInteger(),
+        maxParticipationCount: Int = createRandomPositiveInteger(),
         text: String = "카카오페이 쵝ㄱ오!!",
         imageUrl: String = "https://example.com/image.jpg",
         exposureAt: ExposureAtDto =
@@ -21,7 +21,7 @@ object MockDto {
         return AdvertisementCreationRequest(
             name = name,
             rewardAmount = rewardAmount,
-            maxParticipationCount = participationCount,
+            maxParticipationCount = maxParticipationCount,
             text = text,
             imageUrl = imageUrl,
             exposureAt = exposureAt,

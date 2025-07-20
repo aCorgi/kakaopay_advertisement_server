@@ -1,7 +1,7 @@
 package com.task.kakaopayadvertisementserver.domain.entity
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.task.kakaopayadvertisementserver.config.security.KakaopayMemberAuthority
+import com.task.kakaopayadvertisementserver.config.security.KakaopayAuthority
 import com.task.kakaopayadvertisementserver.converter.JsonColumnConverter
 import com.task.kakaopayadvertisementserver.domain.BaseEntity
 import jakarta.persistence.Column
@@ -24,10 +24,10 @@ class Member(
     val password: String,
     @Column(nullable = false, columnDefinition = "JSON")
     @Convert(converter = KakaopayMemberAuthorityConverter::class)
-    var authorities: Set<KakaopayMemberAuthority>,
+    var authorities: Set<KakaopayAuthority>,
 ) : BaseEntity()
 
 @Converter(autoApply = true)
-class KakaopayMemberAuthorityConverter : JsonColumnConverter<Set<KakaopayMemberAuthority>>(
-    object : TypeReference<Set<KakaopayMemberAuthority>>() {},
+class KakaopayMemberAuthorityConverter : JsonColumnConverter<Set<KakaopayAuthority>>(
+    object : TypeReference<Set<KakaopayAuthority>>() {},
 )

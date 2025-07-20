@@ -49,7 +49,7 @@ class BasicAuthenticationProvider(
 data class KakaopayMember(
     val id: Int,
     val email: String,
-    val roles: Set<KakaopayMemberAuthority>,
+    val roles: Set<KakaopayAuthority>,
 ) : UserDetails {
     override fun getAuthorities() = roles
 
@@ -66,7 +66,7 @@ data class KakaopayMember(
     override fun isEnabled() = true
 }
 
-enum class KakaopayMemberAuthority : GrantedAuthority {
+enum class KakaopayAuthority : GrantedAuthority {
     ADMIN,
     USER,
     ;

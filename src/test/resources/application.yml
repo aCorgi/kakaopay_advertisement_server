@@ -62,3 +62,9 @@ api:
     base-url: http://localhost:8090
     username: kakaopay
     password: blabla
+
+rabbit-mq:
+  exchange: message-queue-exchange
+  advertisement-participation-message-queue:
+    name: advertisement-participation-message-queue
+    routing-key: advertisement-participation-message-key

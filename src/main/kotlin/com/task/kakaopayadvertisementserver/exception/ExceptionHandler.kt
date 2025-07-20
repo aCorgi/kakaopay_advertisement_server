@@ -2,6 +2,7 @@ package com.task.kakaopayadvertisementserver.exception
 
 import com.task.kakaopayadvertisementserver.util.Constants.Exception.DEFAULT_CLIENT_EXCEPTION_MESSAGE
 import com.task.kakaopayadvertisementserver.util.Constants.Exception.DEFAULT_SERVER_EXCEPTION_MESSAGE
+import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -22,9 +23,9 @@ class ExceptionHandler {
             .body(ExceptionResponse(message = clientException.message ?: DEFAULT_CLIENT_EXCEPTION_MESSAGE))
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentValidationException(methodArgumentNotValidException: MethodArgumentNotValidException): ResponseEntity<String> {
-        return ResponseEntity.badRequest().body(methodArgumentNotValidException.message)
+    @ExceptionHandler(MethodArgumentNotValidException::class, ConstraintViolationException::class)
+    fun handleMethodArgumentValidationException(exception: Exception): ResponseEntity<String> {
+        return ResponseEntity.badRequest().body(exception.message)
     }
 
     @ExceptionHandler(Throwable::class)

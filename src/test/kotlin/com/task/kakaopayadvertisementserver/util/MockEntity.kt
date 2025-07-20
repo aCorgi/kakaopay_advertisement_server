@@ -1,6 +1,6 @@
 package com.task.kakaopayadvertisementserver.util
 
-import com.task.kakaopayadvertisementserver.config.security.KakaopayMemberAuthority
+import com.task.kakaopayadvertisementserver.config.security.KakaopayAuthority
 import com.task.kakaopayadvertisementserver.domain.embeddable.ExposureAt
 import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.domain.entity.AdvertisementParticipation
@@ -42,7 +42,7 @@ object MockMember {
         id: Int = 0,
         email: String = "banner4@naver.com",
         password: String = "blabla",
-        authorities: Set<KakaopayMemberAuthority> = setOf(KakaopayMemberAuthority.ADMIN, KakaopayMemberAuthority.USER),
+        authorities: Set<KakaopayAuthority> = setOf(KakaopayAuthority.ADMIN, KakaopayAuthority.USER),
     ): Member {
         return Member(
             email = email,

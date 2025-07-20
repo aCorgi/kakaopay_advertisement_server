@@ -5,7 +5,6 @@ import com.rabbitmq.client.Channel
 import com.task.kakaopayadvertisementserver.client.RewardInternalApiClient
 import com.task.kakaopayadvertisementserver.dto.api.PointEarningApiRequest
 import com.task.kakaopayadvertisementserver.dto.message.AdvertisementParticipationCompletedMessageDto
-import com.task.kakaopayadvertisementserver.property.RabbitMQProperties
 import com.task.kakaopayadvertisementserver.util.logger
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component

@@ -1,6 +1,6 @@
 package com.task.kakaopayadvertisementserver.service
 
-import com.task.kakaopayadvertisementserver.config.security.KakaopayMemberAuthority
+import com.task.kakaopayadvertisementserver.config.security.KakaopayAuthority
 import com.task.kakaopayadvertisementserver.domain.entity.Member
 import com.task.kakaopayadvertisementserver.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -32,7 +32,7 @@ class MemberService(
                 Member(
                     email = adminEmail,
                     password = adminPassword,
-                    authorities = setOf(KakaopayMemberAuthority.ADMIN),
+                    authorities = setOf(KakaopayAuthority.ADMIN),
                 ),
             )
 
@@ -41,7 +41,7 @@ class MemberService(
                 Member(
                     email = userEmail,
                     password = userPassword,
-                    authorities = setOf(KakaopayMemberAuthority.USER),
+                    authorities = setOf(KakaopayAuthority.USER),
                 ),
             )
 
@@ -50,7 +50,7 @@ class MemberService(
                 Member(
                     email = superUserEmail,
                     password = superUserPassword,
-                    authorities = setOf(KakaopayMemberAuthority.USER, KakaopayMemberAuthority.ADMIN),
+                    authorities = setOf(KakaopayAuthority.USER, KakaopayAuthority.ADMIN),
                 ),
             )
     }
