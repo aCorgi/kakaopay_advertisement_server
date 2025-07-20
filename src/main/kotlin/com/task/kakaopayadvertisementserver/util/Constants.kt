@@ -9,17 +9,13 @@ object Constants {
     const val AES_ALGORITHM = "AES"
 
     object Page {
-        const val MAX_ADVERTISEMENT_PAGE_SIZE = 10
         const val MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE = 50
         const val DEFAULT_PAGE = 0L
     }
 
-    const val MIN_PARTICIPATION_COUNT = 1
+    const val MAX_ADVERTISEMENT_FETCH_COUNT = 10L
 
     object Redis {
-        const val BASIC_AUTH_USERS_REDIS_KEY = "BASIC_AUTH_USERS"
-        const val BASIC_AUTH_USERS_CHANNEL = "BASIC_AUTH_USERS"
-
         const val LOCK_WAIT_TIME_IN_SECONDS = 5L
         const val LOCK_LEASE_TIME_IN_SECONDS = 10L
     }

@@ -5,9 +5,6 @@ import com.task.kakaopayadvertisementserver.dto.AdvertisementCreationRequest
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,23 +19,11 @@ class AdvertisementService(
         return advertisementRepository.findByIdOrNull(id)
     }
 
-    fun findPagedAdvertisement(
-        page: Int,
-        size: Int,
-        nowAt: LocalDateTime,
-    ): Page<AdvertisementResponse> {
-        val sort = Sort.by(Sort.Direction.DESC, Advertisement::rewardAmount.name)
-        val pageable = PageRequest.of(page, size, sort)
-
+    fun findAvailableAndVisibleAdvertisements(nowAt: LocalDateTime): List<AdvertisementResponse> {
         // TODO: 참가 가능한 광고 여 부 (선택사항) 대응
-        // TODO: queryDSL 을 사용해서 maxParticipationCount > currentParticipationCount 인 광고만 조회하도록 개선
-        val pagedAdvertisements =
-            advertisementRepository.findPagedAvailableAndVisibleAdvertisements(
-                pageable = pageable,
-                nowAt = nowAt,
-            )
+        val advertisements = advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt)
 
-        return pagedAdvertisements.map { AdvertisementResponse(it) }
+        return advertisements.map { AdvertisementResponse(it) }
     }
 
     @Transactional

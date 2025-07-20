@@ -20,9 +20,6 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import java.time.LocalDateTime
 import kotlin.test.Test
 
@@ -104,40 +101,25 @@ class AdvertisementServiceTest : UnitTestBase() {
             fun `요청한 시간 기준으로 목록 조회한다`() {
                 // given
                 val nowAt = LocalDateTime.now()
-                val page = 0
-                val size = 10
-                val sort = Sort.by(Sort.Direction.DESC, Advertisement::rewardAmount.name)
-                val pageable = PageRequest.of(page, size, sort)
                 val advertisements =
                     listOf(
-                        MockAdvertisement.of(name = "광고1", maxParticipationCount = 20, rewardAmount = 200),
                         MockAdvertisement.of(name = "광고2", maxParticipationCount = 12, rewardAmount = 500),
+                        MockAdvertisement.of(name = "광고1", maxParticipationCount = 20, rewardAmount = 200),
                     )
-                val pagedAdvertisements =
-                    PageImpl(
-                        advertisements.sortedByDescending { it.rewardAmount },
-                        pageable,
-                        advertisements.size.toLong(),
-                    )
-
-                whenever(
-                    advertisementRepository.findPagedAvailableAndVisibleAdvertisements(
-                        pageable = pageable,
-                        nowAt = nowAt,
-                    ),
-                ).thenReturn(pagedAdvertisements)
+                whenever(advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt))
+                    .thenReturn(advertisements)
 
                 // when
                 val result =
                     assertDoesNotThrow {
-                        advertisementService.findPagedAdvertisement(page, size, nowAt)
+                        advertisementService.findAvailableAndVisibleAdvertisements(nowAt)
                     }
 
                 // then
                 assertSoftly {
-                    it.assertThat(result.content).hasSize(2)
-                    it.assertThat(result.content[0]).isEqualTo(AdvertisementResponse(advertisements[1]))
-                    it.assertThat(result.content[1]).isEqualTo(AdvertisementResponse(advertisements[0]))
+                    it.assertThat(result).hasSize(2)
+                    it.assertThat(result[0]).isEqualTo(AdvertisementResponse(advertisements[0]))
+                    it.assertThat(result[1]).isEqualTo(AdvertisementResponse(advertisements[1]))
                 }
             }
         }

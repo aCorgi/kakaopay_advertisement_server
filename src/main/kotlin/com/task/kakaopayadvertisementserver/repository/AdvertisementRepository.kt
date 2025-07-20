@@ -3,9 +3,8 @@ package com.task.kakaopayadvertisementserver.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.domain.entity.QAdvertisement.advertisement
+import com.task.kakaopayadvertisementserver.util.Constants.MAX_ADVERTISEMENT_FETCH_COUNT
 import com.task.kakaopayadvertisementserver.util.QuerydslRepositorySupporter
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
 
@@ -14,19 +13,13 @@ interface AdvertisementRepository : JpaRepository<Advertisement, Int>, Advertise
 }
 
 interface AdvertisementSearchRepository {
-    fun findPagedAvailableAndVisibleAdvertisements(
-        pageable: Pageable,
-        nowAt: LocalDateTime,
-    ): Page<Advertisement>
+    fun findAvailableAndVisibleAdvertisements(nowAt: LocalDateTime): List<Advertisement>
 }
 
 class AdvertisementRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
 ) : QuerydslRepositorySupporter<Advertisement>(Advertisement::class.java), AdvertisementSearchRepository {
-    override fun findPagedAvailableAndVisibleAdvertisements(
-        pageable: Pageable,
-        nowAt: LocalDateTime,
-    ): Page<Advertisement> {
+    override fun findAvailableAndVisibleAdvertisements(nowAt: LocalDateTime): List<Advertisement> {
         val query =
             jpaQueryFactory
                 .selectFrom(advertisement)
@@ -35,7 +28,9 @@ class AdvertisementRepositoryImpl(
                     advertisement.exposureAt.endAt.goe(nowAt),
                     advertisement.maxParticipationCount.gt(advertisement.currentParticipationCount),
                 )
+                .orderBy(advertisement.rewardAmount.desc())
+                .limit(MAX_ADVERTISEMENT_FETCH_COUNT)
 
-        return getPageByQuery(query, pageable)
+        return query.fetch()
     }
 }

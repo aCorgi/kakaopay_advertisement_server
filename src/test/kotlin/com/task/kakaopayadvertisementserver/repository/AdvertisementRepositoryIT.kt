@@ -2,7 +2,7 @@ package com.task.kakaopayadvertisementserver.repository
 
 import com.task.kakaopayadvertisementserver.config.IntegrationTestBase
 import com.task.kakaopayadvertisementserver.domain.embeddable.ExposureAt
-import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
+import com.task.kakaopayadvertisementserver.util.Constants.MAX_ADVERTISEMENT_FETCH_COUNT
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -10,8 +10,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
@@ -26,14 +24,19 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
     }
 
     @Nested
-    inner class `광고 페이징 조회` {
+    inner class `노출 가능하고 참여 가능한 광고 목록 조회` {
         @Nested
         inner class `성공` {
-            @DisplayName("현재시간 기준 노출 기간에 포함하고, 최대 참여 횟수까지 증가하지 않은 광고를 적립 금액 내림차순으로 조회한다")
+            @DisplayName(
+                """
+                현재시간 기준 노출 기간에 포함하고, 최대 참여 횟수까지 증가하지 않은 광고를 적립 금액 내림차순으로 조회한다
+                최대 $MAX_ADVERTISEMENT_FETCH_COUNT 개까지 조회한다.
+            """,
+            )
             @Test
-            fun `노출 가능하고 참여 가능한 광고를 페이징 조회한다`() {
+            fun `현재 시간 기준에 적합한 광고들을 조회한다`() {
                 // given
-                val now = LocalDateTime.now()
+                val nowAt = LocalDateTime.now()
                 val advertisement =
                     MockAdvertisement.of(
                         name = "광고1",
@@ -42,8 +45,8 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
                         currentParticipationCount = 5,
                         exposureAt =
                             ExposureAt(
-                                startAt = now.minusDays(1),
-                                endAt = now.plusDays(1),
+                                startAt = nowAt.minusDays(1),
+                                endAt = nowAt.plusDays(1),
                             ),
                     )
                 val otherAdvertisement =
@@ -54,8 +57,8 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
                         currentParticipationCount = 5,
                         exposureAt =
                             ExposureAt(
-                                startAt = now.minusDays(1),
-                                endAt = now.plusDays(1),
+                                startAt = nowAt.minusDays(1),
+                                endAt = nowAt.plusDays(1),
                             ),
                     )
                 val fullyParticipatedAdvertisement =
@@ -66,8 +69,8 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
                         currentParticipationCount = 10,
                         exposureAt =
                             ExposureAt(
-                                startAt = now.minusDays(2),
-                                endAt = now.plusDays(2),
+                                startAt = nowAt.minusDays(2),
+                                endAt = nowAt.plusDays(2),
                             ),
                     )
                 val invisibleAdvertisement =
@@ -78,8 +81,8 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
                         currentParticipationCount = 5,
                         exposureAt =
                             ExposureAt(
-                                startAt = now.minusDays(21),
-                                endAt = now.minusDays(15),
+                                startAt = nowAt.minusDays(21),
+                                endAt = nowAt.minusDays(15),
                             ),
                     )
 
@@ -92,16 +95,14 @@ class AdvertisementRepositoryIT : IntegrationTestBase() {
 
                 // when & then
                 transactional {
-                    val sort = Sort.by(Sort.Direction.DESC, Advertisement::rewardAmount.name)
-                    val pageable = PageRequest.of(0, 10, sort)
-                    val result = advertisementRepository.findPagedAvailableAndVisibleAdvertisements(pageable, now)
+                    val result = advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt)
 
                     // then
-                    assertEquals(2, result.totalElements)
-                    assertEquals(otherAdvertisement.id, result.content[0].id)
-                    assertEquals(otherAdvertisement.name, result.content[0].name)
-                    assertEquals(advertisement.id, result.content[1].id)
-                    assertEquals(advertisement.name, result.content[1].name)
+                    assertEquals(2, result.size)
+                    assertEquals(otherAdvertisement.id, result[0].id)
+                    assertEquals(otherAdvertisement.name, result[0].name)
+                    assertEquals(advertisement.id, result[1].id)
+                    assertEquals(advertisement.name, result[1].name)
                 }
             }
         }

@@ -11,6 +11,7 @@ data class AdvertisementResponse(
     val exposureAt: ExposureAt,
     val rewardAmount: Int,
     val maxParticipationCount: Int,
+    val currentParticipationCount: Int,
 ) {
     constructor(entity: Advertisement) : this(
         id = entity.id,
@@ -20,5 +21,6 @@ data class AdvertisementResponse(
         exposureAt = entity.exposureAt,
         rewardAmount = entity.rewardAmount,
         maxParticipationCount = entity.maxParticipationCount,
+        currentParticipationCount = entity.currentParticipationCount,
     )
 }
