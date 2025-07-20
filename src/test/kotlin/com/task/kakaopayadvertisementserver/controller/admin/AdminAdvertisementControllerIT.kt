@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.post
 import java.time.LocalDateTime
 import kotlin.test.Test
 
-class AdvertisementControllerIT : ControllerTestBase() {
+class AdminAdvertisementControllerIT : ControllerTestBase() {
     @Nested
     inner class `광고 등록` {
         private val url = "/admin/advertisements"

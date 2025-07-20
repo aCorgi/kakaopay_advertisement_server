@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.task.kakaopayadvertisementserver.KakaopayAdvertisementServerApplication
 import com.task.kakaopayadvertisementserver.config.security.PasswordConfiguration
 import com.task.kakaopayadvertisementserver.config.security.SecurityConfiguration
-import com.task.kakaopayadvertisementserver.controller.admin.AdvertisementController
-import com.task.kakaopayadvertisementserver.controller.user.AdvertisementParticipationController
+import com.task.kakaopayadvertisementserver.controller.admin.AdminAdvertisementController
+import com.task.kakaopayadvertisementserver.controller.user.UserAdvertisementParticipationController
 import com.task.kakaopayadvertisementserver.exception.ExceptionHandler
 import com.task.kakaopayadvertisementserver.service.AdvertisementParticipationService
 import com.task.kakaopayadvertisementserver.service.AdvertisementService
@@ -24,8 +24,8 @@ import org.springframework.test.web.servlet.MockMvc
 
 @WebMvcTest(
     value = [
-        AdvertisementController::class,
-        AdvertisementParticipationController::class,
+        AdminAdvertisementController::class,
+        UserAdvertisementParticipationController::class,
     ],
 )
 @ActiveProfiles("test")

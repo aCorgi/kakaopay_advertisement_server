@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/user/advertisement-participations")
 @SecurityRequirement(name = "basicAuth")
-class AdvertisementParticipationController(
+class UserAdvertisementParticipationController(
     private val advertisementParticipationService: AdvertisementParticipationService,
 ) {
     @GetMapping

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.post
 import java.time.LocalDateTime
 import kotlin.test.Test
 
-class AdvertisementParticipationControllerIT : ControllerTestBase() {
+class UserAdvertisementParticipationControllerIT : ControllerTestBase() {
     companion object {
         const val MEMBER_ID = 122
     }
