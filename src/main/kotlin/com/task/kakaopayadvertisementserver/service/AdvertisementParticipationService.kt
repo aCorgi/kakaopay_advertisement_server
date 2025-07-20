@@ -87,6 +87,7 @@ class AdvertisementParticipationService(
             )
 
         advertisementParticipationRepository.save(advertisementParticipation)
+        advertisement.increaseParticipationCount()
 
         /*
             TODO: 어필) 보상 트랜잭션 관리 대신 트랜잭션 커밋 성공까지 마친 후, 포인트 지급되도록 메세지큐 발행. 메세지 리스너가 포인트 지급 처리
@@ -95,9 +96,6 @@ class AdvertisementParticipationService(
             MQ 로 포인트 지급 로깅 관리도 하면서, 미지급 시 retry 로 지급되도록 시스템이 자동으로 조치할 수 있다.
             그와 함께, 트래픽을 분산시킬 수 있다.
          */
-
-        advertisement.increaseParticipationCount()
-
         eventPublisher.publishEvent(
             AdvertisementParticipationCompletedEvent(
                 memberId = member.id,

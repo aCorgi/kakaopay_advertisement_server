@@ -10,7 +10,7 @@ import org.springframework.web.service.annotation.PostExchange
 @Component
 @Primary
 class MockRewardInternalApiClient : RewardInternalApiClient {
-    override fun earnPointByUserId(request: PointEarningApiRequest) {
+    override fun earnPointByMemberId(request: PointEarningApiRequest) {
         // 적립 서버 요청에 대한 응답은 무시합니다.
         // Mock 호출을 위해 추가 구현이 없습니다.
     }
@@ -19,7 +19,7 @@ class MockRewardInternalApiClient : RewardInternalApiClient {
 @HttpExchange
 interface RewardInternalApiClient {
     @PostExchange(EARN_POINT_BY_USER_ID_URL)
-    fun earnPointByUserId(
+    fun earnPointByMemberId(
         @RequestBody request: PointEarningApiRequest,
     )
 

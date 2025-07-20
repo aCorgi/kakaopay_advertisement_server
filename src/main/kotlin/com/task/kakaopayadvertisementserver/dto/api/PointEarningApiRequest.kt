@@ -1,6 +1,6 @@
 package com.task.kakaopayadvertisementserver.dto.api
 
 data class PointEarningApiRequest(
-    val userId: Int,
+    val memberId: Int,
     val point: Int,
 )
