@@ -1,14 +1,49 @@
 package com.task.kakaopayadvertisementserver.service
 
+import com.task.kakaopayadvertisementserver.config.security.KakaopayMemberAuthority
 import com.task.kakaopayadvertisementserver.domain.entity.Member
 import com.task.kakaopayadvertisementserver.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
+    @Transactional
+    fun create(member: Member): Member {
+        return memberRepository.save(member)
+    }
+
+    @Transactional
+    fun initializeAdminAndUserIfNotExists() {
+        // ADMIN 계정, USER 계정을 initialize 시 생성한다
+        // password: admin1234
+        val (adminEmail, adminPassword) = "admin@kakaopay.com" to "\$2a\$10\$O0tpFLdFBOl1hjJvraUn6uH8h1ywVKWCZZSRxP/KOvuD.VIxmzvW6"
+        // password: user1234
+        val (userEmail, userPassword) = "user@kakaopay.com" to "\$2a\$10\$MLF1Fxr9aohjB.BbM9GzhOmybSrYEmH11Rupwdrfylo9jQpbmfQ5K"
+
+        findByEmailOrNull(adminEmail)
+            ?: create(
+                Member(
+                    email = adminEmail,
+                    password = adminPassword,
+                    authorities = setOf(KakaopayMemberAuthority.ADMIN),
+                ),
+            )
+
+        findByEmailOrNull(adminEmail)
+            ?: create(
+                Member(
+                    email = adminEmail,
+                    password = adminPassword,
+                    authorities = setOf(KakaopayMemberAuthority.ADMIN),
+                ),
+            )
+    }
+
     fun findByEmailOrNull(email: String): Member? {
         return memberRepository.findByEmail(email)
     }
