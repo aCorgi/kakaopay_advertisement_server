@@ -1,6 +1,7 @@
 package com.task.kakaopayadvertisementserver.component
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.rabbitmq.client.Channel
 import com.task.kakaopayadvertisementserver.client.RewardInternalApiClient
 import com.task.kakaopayadvertisementserver.dto.api.PointEarningApiRequest
@@ -16,13 +17,14 @@ class MessageQueueConsumer(
 ) {
     val log = logger<MessageQueueConsumer>()
 
-    @RabbitListener(queues = ["\${rabbitmq.advertisement-participation-message-queue.name}"])
+    @RabbitListener(
+        queues = ["\${rabbitmq.advertisement-participation-message-queue.name}"],
+    )
     fun receiveAdvertisementParticipationCompletedMessage(
-        messageDto: AdvertisementParticipationCompletedMessageDto,
+        message: String,
         channel: Channel,
     ) {
-//        val messageBody = String(message.body)
-//        val messageDto = objectMapper.readValue<AdvertisementParticipationCompletedMessageDto>(messageBody)
+        val messageDto = objectMapper.readValue<AdvertisementParticipationCompletedMessageDto>(message)
         log.info("광고 참여 완료 메시지 수신: $messageDto")
 
         mockRewardInternalApiClient.earnPointByMemberId(
