@@ -57,12 +57,19 @@ class AdvertisementParticipationService(
     ) {
         val member =
             memberService.findByIdOrNull(memberId)
-                ?: throw ResourceNotFoundException("존재하지 않는 회원입니다. (요청 회원 ID: $memberId)")
+                ?: throw ResourceNotFoundException("존재하지 않는 회원입니다.")
         val advertisement =
             advertisementService.findByIdOrNull(request.advertisementId)
-                ?: throw ResourceNotFoundException("존재하지 않는 광고입니다. (요청 광고 ID: ${request.advertisementId})")
+                ?: throw ResourceNotFoundException("존재하지 않는 광고입니다.")
 
         advertisement.validateParticipationLimit()
+        advertisementParticipationRepository.findByMemberAndAdvertisement(
+            member = member,
+            advertisement = advertisement,
+        )
+            ?.let {
+                throw ClientBadRequestException("이미 참여한 광고입니다.")
+            }
 
         // TODO: 어필) Redisson 분산락 (광고ID 단위)
         lockService.runWithLock(

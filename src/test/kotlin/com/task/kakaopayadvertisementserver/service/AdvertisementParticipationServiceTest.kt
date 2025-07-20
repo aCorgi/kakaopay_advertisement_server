@@ -142,6 +142,27 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
             }
 
             @Test
+            fun `이미 참여한 광고일 경우 예외를 반환한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val advertisement = MockAdvertisement.of(id = 100, name = "광고1")
+                val request = AdvertisementParticipationRequest(advertisementId = advertisement.id)
+                val existingParticipation = MockAdvertisementParticipation.of(member = member, advertisement = advertisement)
+
+                whenever(memberService.findByIdOrNull(member.id))
+                    .thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId))
+                    .thenReturn(advertisement)
+                whenever(advertisementParticipationRepository.findByMemberAndAdvertisement(member, advertisement))
+                    .thenReturn(existingParticipation)
+
+                // when & then
+                assertThrows<ClientBadRequestException> {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+            }
+
+            @Test
             fun `다른 사용자가 광고 참여 중일 때 예외를 반환한다`() {
                 // given
                 val member = MockMember.of(id = 1)
