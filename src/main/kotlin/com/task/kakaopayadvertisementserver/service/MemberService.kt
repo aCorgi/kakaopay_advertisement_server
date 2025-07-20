@@ -20,11 +20,11 @@ class MemberService(
     @Transactional
     fun initializeAdminAndUserIfNotExists() {
         // ADMIN 계정, USER 계정, 두 권한을 가진 슈퍼 계정을 initialize 시 생성한다
-        // password: admin1234
+        // username: admin@kakaopay.com, password: admin1234
         val (adminEmail, adminPassword) = "admin@kakaopay.com" to "\$2a\$10\$O0tpFLdFBOl1hjJvraUn6uH8h1ywVKWCZZSRxP/KOvuD.VIxmzvW6"
-        // password: user1234
+        // username: user@kakaopay.com, password: user1234
         val (userEmail, userPassword) = "user@kakaopay.com" to "\$2a\$10\$MLF1Fxr9aohjB.BbM9GzhOmybSrYEmH11Rupwdrfylo9jQpbmfQ5K"
-        // password: haewon1234
+        // username: haewon@kakaopay.com, password: haewon1234
         val (superUserEmail, superUserPassword) = "haewon@kakaopay.som" to "\$2a\$10\$TzDEMXNyh7Cb5xRjOXyAq.mrfmb5IawQZXpY3jCJgsIuQr/7dOdJq"
 
         findByEmailOrNull(adminEmail)

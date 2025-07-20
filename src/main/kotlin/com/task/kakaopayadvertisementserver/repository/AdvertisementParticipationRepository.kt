@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 
 interface AdvertisementParticipationRepository : JpaRepository<AdvertisementParticipation, Int> {
     fun findByMemberIdAndCreatedAtBetween(
-        pageable: Pageable,
         memberId: Int,
         startAt: LocalDateTime,
         endAt: LocalDateTime,
+        pageable: Pageable,
     ): Page<AdvertisementParticipation>
 }

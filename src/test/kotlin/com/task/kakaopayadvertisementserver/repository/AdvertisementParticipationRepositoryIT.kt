@@ -56,7 +56,6 @@ class AdvertisementParticipationRepositoryIT : IntegrationTestBase() {
                     MockAdvertisementParticipation.of(
                         member = member,
                         advertisement = advertisements[1],
-                        createdAt = now.minusDays(20),
                     )
                 val participationOfAnotherMember =
                     MockAdvertisementParticipation.of(
@@ -73,6 +72,8 @@ class AdvertisementParticipationRepositoryIT : IntegrationTestBase() {
                     MockAdvertisementParticipation.createWith(entityManager, participation)
                     MockAdvertisementParticipation.createWith(entityManager, outOfParticipation)
                     MockAdvertisementParticipation.createWith(entityManager, participationOfAnotherMember)
+
+                    outOfParticipation.createdAt = now.minusDays(3)
                 }
 
                 // when
