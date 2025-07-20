@@ -57,6 +57,7 @@ object MockMember {
 
 object MockAdvertisementParticipation {
     fun of(
+        id: Int = 0,
         advertisement: Advertisement = MockAdvertisement.of(),
         member: Member = MockMember.of(),
         createdAt: LocalDateTime = LocalDateTime.now(),
@@ -66,6 +67,7 @@ object MockAdvertisementParticipation {
             member = member,
         )
             .apply {
+                this.id = id
                 this.createdAt = createdAt
             }
     }

@@ -16,8 +16,9 @@ group = "com.task"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 repositories {
@@ -66,7 +67,7 @@ dependencies {
     testImplementation("org.testcontainers:rabbitmq:$testContainersVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-amqp")
     testImplementation("org.awaitility:awaitility:4.2.2")
-    testRuntimeOnly("mysql:mysql-connector-java:8.0.32")
+    testRuntimeOnly("mysql:mysql-connector-java:8.0.33")
 }
 
 kotlin {

@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -23,7 +24,11 @@ class ExceptionHandler {
             .body(ExceptionResponse(message = clientException.message ?: DEFAULT_CLIENT_EXCEPTION_MESSAGE))
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException::class, ConstraintViolationException::class)
+    @ExceptionHandler(
+        MethodArgumentNotValidException::class,
+        ConstraintViolationException::class,
+        MissingServletRequestParameterException::class,
+    )
     fun handleMethodArgumentValidationException(exception: Exception): ResponseEntity<String> {
         return ResponseEntity.badRequest().body(exception.message)
     }
