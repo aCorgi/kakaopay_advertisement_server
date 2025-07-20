@@ -125,7 +125,7 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
                 val page = 0
                 val size = MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE
                 val memberId = 1
-                val startAt = nowAt.plusDays(1)
+                val startAt = nowAt.plusDays(2)
                 val endAt = nowAt.minusDays(1)
 
                 // when & then
