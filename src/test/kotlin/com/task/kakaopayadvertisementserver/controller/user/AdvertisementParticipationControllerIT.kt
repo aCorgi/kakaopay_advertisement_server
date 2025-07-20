@@ -63,11 +63,8 @@ class AdvertisementParticipationControllerIT : ControllerTestBase() {
             @WithMockKakaopayMember(kakaopayAuthorities = [KakaopayAuthority.ADMIN])
             @Test
             fun `어드민 권한으로 광고 참여 등록 시 403 FORBIDDEN 를 반환한다`() {
-                // given
-                val advertisementId = 1L
-
                 // when & then
-                mockMvc.post(url.replace("{advertisementId}", "$advertisementId")) {
+                mockMvc.post(url) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isForbidden() }
@@ -76,11 +73,8 @@ class AdvertisementParticipationControllerIT : ControllerTestBase() {
 
             @Test
             fun `Basic auth token 이 없으면 401 Unauthorized 를 반환한다`() {
-                // given
-                val advertisementId = 1L
-
                 // when & then
-                mockMvc.post(url.replace("{advertisementId}", "$advertisementId")) {
+                mockMvc.post(url) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isUnauthorized() }

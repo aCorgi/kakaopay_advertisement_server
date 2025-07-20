@@ -2,8 +2,11 @@ package com.task.kakaopayadvertisementserver.service
 
 import com.task.kakaopayadvertisementserver.config.UnitTestBase
 import com.task.kakaopayadvertisementserver.domain.entity.AdvertisementParticipation
+import com.task.kakaopayadvertisementserver.dto.AdvertisementParticipationRequest
 import com.task.kakaopayadvertisementserver.dto.AdvertisementParticipationResponse
+import com.task.kakaopayadvertisementserver.dto.event.AdvertisementParticipationCompletedEvent
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
+import com.task.kakaopayadvertisementserver.exception.ResourceNotFoundException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementParticipationRepository
 import com.task.kakaopayadvertisementserver.util.Constants.Page.MAX_ADVERTISEMENT_PARTICIPATION_PAGE_SIZE
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
@@ -13,8 +16,11 @@ import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.PageImpl
@@ -41,6 +47,119 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
 
     @Mock
     private lateinit var lockService: LockService
+
+    @Nested
+    inner class `광고 참여 등록` {
+        @Nested
+        inner class `성공` {
+            @Test
+            fun `광고 참여 등록에 성공하여 트랜잭션 커밋 후 포인트 적립을 위한 이벤트를 발행한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val advertisement = MockAdvertisement.of(id = 100, name = "광고1", rewardAmount = 500)
+                val request = AdvertisementParticipationRequest(advertisementId = advertisement.id)
+
+                whenever(memberService.findByIdOrNull(member.id))
+                    .thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId))
+                    .thenReturn(advertisement)
+                whenever(lockService.runWithLock(anyString(), any<() -> Unit>()))
+                    .thenAnswer {
+                        (it.arguments[1] as () -> Unit).invoke()
+                    }
+
+                // when & then
+                assertDoesNotThrow {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+
+                verify(advertisementParticipationRepository)
+                    .save(any())
+                verify(eventPublisher)
+                    .publishEvent(
+                        AdvertisementParticipationCompletedEvent(
+                            memberId = member.id,
+                            point = advertisement.rewardAmount,
+                        ),
+                    )
+            }
+        }
+
+        @Nested
+        inner class `실패` {
+            @Test
+            fun `존재하지 않는 회원 ID로 광고 참여 등록 시 예외를 반환한다`() {
+                // given
+                val memberId = 999
+                val request = AdvertisementParticipationRequest(advertisementId = 100)
+
+                whenever(memberService.findByIdOrNull(memberId))
+                    .thenReturn(null)
+
+                // when & then
+                assertThrows<ResourceNotFoundException> {
+                    advertisementParticipationService.participateAdvertisement(request, memberId)
+                }
+            }
+
+            @Test
+            fun `존재하지 않는 광고 ID로 광고 참여 등록 시 예외를 반환한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val request = AdvertisementParticipationRequest(advertisementId = 999)
+
+                whenever(memberService.findByIdOrNull(member.id))
+                    .thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId))
+                    .thenReturn(null)
+
+                // when & then
+                assertThrows<ResourceNotFoundException> {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+            }
+
+            @Test
+            fun `참여 제한이 초과된 광고에 참여 시 예외를 반환한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val advertisement =
+                    MockAdvertisement.of(
+                        id = 100,
+                        name = "광고1",
+                        maxParticipationCount = 10,
+                        currentParticipationCount = 10,
+                    )
+                val request = AdvertisementParticipationRequest(advertisementId = advertisement.id)
+
+                whenever(memberService.findByIdOrNull(member.id)).thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId)).thenReturn(advertisement)
+
+                // when & then
+                assertThrows<ClientBadRequestException> {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+            }
+
+            @Test
+            fun `다른 사용자가 광고 참여 중일 때 예외를 반환한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val advertisement = MockAdvertisement.of(id = 100, name = "광고1")
+                val request = AdvertisementParticipationRequest(advertisementId = advertisement.id)
+
+                whenever(memberService.findByIdOrNull(member.id)).thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId)).thenReturn(advertisement)
+                whenever(lockService.runWithLock(anyString(), any<() -> Unit>()))
+                    .thenReturn(null)
+
+                // when & then
+                assertThrows<ClientBadRequestException> {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+            }
+        }
+    }
 
     @Nested
     inner class `광고 참여 이력 페이징 조회` {
