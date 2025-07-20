@@ -3,7 +3,6 @@ package com.task.kakaopayadvertisementserver.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.domain.entity.QAdvertisement.advertisement
-import com.task.kakaopayadvertisementserver.util.Constants.MAX_ADVERTISEMENT_FETCH_COUNT
 import com.task.kakaopayadvertisementserver.util.QuerydslRepositorySupporter
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
@@ -29,7 +28,6 @@ class AdvertisementRepositoryImpl(
                     advertisement.maxParticipationCount.gt(advertisement.currentParticipationCount),
                 )
                 .orderBy(advertisement.rewardAmount.desc())
-                .limit(MAX_ADVERTISEMENT_FETCH_COUNT)
 
         return query.fetch()
     }

@@ -4,6 +4,7 @@ import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
 import com.task.kakaopayadvertisementserver.dto.AdvertisementCreationRequest
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
+import com.task.kakaopayadvertisementserver.exception.ResourceNotFoundException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,18 +14,33 @@ import java.time.LocalDateTime
 @Transactional(readOnly = true)
 @Service
 class AdvertisementService(
+    private val memberService: MemberService,
     private val advertisementRepository: AdvertisementRepository,
     private val participationEligibilityService: ParticipationEligibilityService,
+    private val participationEligibilityValidationService: ParticipationEligibilityValidationService,
 ) {
     fun findByIdOrNull(id: Int): Advertisement? {
         return advertisementRepository.findByIdOrNull(id)
     }
 
-    fun findAvailableAndVisibleAdvertisements(nowAt: LocalDateTime): List<AdvertisementResponse> {
-        // TODO: 참가 가능한 광고 여 부 (선택사항) 대응
-        val advertisements = advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt)
+    fun findAvailableAndVisibleAdvertisements(
+        memberId: Int,
+        nowAt: LocalDateTime,
+    ): List<AdvertisementResponse> {
+        val member =
+            memberService.findByIdOrNull(memberId)
+                ?: throw ResourceNotFoundException("존재하지 않는 회원입니다.")
 
-        return advertisements.map { AdvertisementResponse(it) }
+        val advertisements = advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt)
+        val eligibleAdvertisements =
+            advertisements.filter { advertisement ->
+                participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                    advertisement = advertisement,
+                    member = member,
+                )
+            }
+
+        return eligibleAdvertisements.map { AdvertisementResponse(it) }
     }
 
     @Transactional

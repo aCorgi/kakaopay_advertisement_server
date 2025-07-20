@@ -34,7 +34,7 @@ class ParticipationEligibility(
 class ParticipationEligibilityTypeConverter : EnumColumnConverter<ParticipationEligibilityType>(ParticipationEligibilityType::class.java)
 
 enum class ParticipationEligibilityType(private val description: String) {
-    HAS_PARTICIPATED_WITH_ADVERTISEMENT("특정 광고를 참가한 이력이 있는 유저"),
+    HAS_PARTICIPATED_IN_ADVERTISEMENT("특정 광고를 참가한 이력이 있는 유저"),
     REPEATED("총 여러 번 참가했던 유저"),
     FIRST_TIME("처음으로 광고에 참여하는 유저"),
 }

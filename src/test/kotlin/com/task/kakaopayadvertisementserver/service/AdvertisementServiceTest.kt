@@ -9,6 +9,7 @@ import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
+import com.task.kakaopayadvertisementserver.util.MockMember
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.DisplayName
@@ -32,6 +33,9 @@ class AdvertisementServiceTest : UnitTestBase() {
 
     @Mock
     private lateinit var advertisementRepository: AdvertisementRepository
+
+    @Mock
+    private lateinit var participationEligibilityValidationService: ParticipationEligibilityValidationService
 
     @Mock
     private lateinit var participationEligibilityService: ParticipationEligibilityService
@@ -124,6 +128,7 @@ class AdvertisementServiceTest : UnitTestBase() {
             @Test
             fun `요청한 시간 기준으로 목록 조회한다`() {
                 // given
+                val member = MockMember.of(id = 1235)
                 val nowAt = LocalDateTime.now()
                 val advertisements =
                     listOf(
@@ -136,7 +141,7 @@ class AdvertisementServiceTest : UnitTestBase() {
                 // when
                 val result =
                     assertDoesNotThrow {
-                        advertisementService.findAvailableAndVisibleAdvertisements(nowAt)
+                        advertisementService.findAvailableAndVisibleAdvertisements(member.id, nowAt)
                     }
 
                 // then

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
 
 interface AdvertisementParticipationRepository : JpaRepository<AdvertisementParticipation, Int> {
+    fun findByMember(member: Member): List<AdvertisementParticipation>
+
     fun findByMemberAndAdvertisement(
         member: Member,
         advertisement: Advertisement,

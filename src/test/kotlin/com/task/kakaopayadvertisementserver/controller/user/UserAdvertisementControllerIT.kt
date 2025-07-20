@@ -7,19 +7,27 @@ import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import org.junit.jupiter.api.Nested
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import org.springframework.test.web.servlet.get
 import java.time.LocalDateTime
 import kotlin.test.Test
 
 class UserAdvertisementControllerIT : ControllerTestBase() {
+    companion object {
+        const val MEMBER_ID = 122
+    }
+
     @Nested
     inner class `참가할 수 있는 광고 목록 조회` {
         private val url = "/user/advertisements"
 
         @Nested
         inner class `성공` {
-            @WithMockKakaopayMember(kakaopayAuthorities = [KakaopayAuthority.USER])
+            @WithMockKakaopayMember(
+                id = MEMBER_ID,
+                kakaopayAuthorities = [KakaopayAuthority.USER]
+            )
             @Test
             fun `광고 목록 조회에 성공하면 200 OK 와 광고 목록을 반환한다`() {
                 // given
@@ -30,7 +38,7 @@ class UserAdvertisementControllerIT : ControllerTestBase() {
                     )
                 val advertisementResponses = advertisements.map { AdvertisementResponse(it) }
 
-                whenever(advertisementService.findAvailableAndVisibleAdvertisements(any<LocalDateTime>()))
+                whenever(advertisementService.findAvailableAndVisibleAdvertisements(eq(MEMBER_ID), any<LocalDateTime>()))
                     .thenReturn(advertisementResponses)
 
                 // when & then
