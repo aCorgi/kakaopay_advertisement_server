@@ -10,7 +10,6 @@ import jakarta.persistence.Converter
 import jakarta.persistence.Entity
 import jakarta.persistence.Index
 import jakarta.persistence.Table
-import java.util.SortedSet
 
 @Entity
 @Table(
@@ -24,11 +23,11 @@ class Member(
     @Column(nullable = false, length = 200)
     val password: String,
     @Column(nullable = false, columnDefinition = "JSON")
-    @Convert(converter = MemberAuthorityConverter::class)
+    @Convert(converter = KakaopayMemberAuthorityConverter::class)
     var authorities: Set<KakaopayMemberAuthority>,
 ) : BaseEntity()
 
 @Converter(autoApply = true)
-class MemberAuthorityConverter : JsonColumnConverter<SortedSet<KakaopayMemberAuthority>>(
-    object : TypeReference<SortedSet<KakaopayMemberAuthority>>() {},
+class KakaopayMemberAuthorityConverter : JsonColumnConverter<Set<KakaopayMemberAuthority>>(
+    object : TypeReference<Set<KakaopayMemberAuthority>>() {},
 )

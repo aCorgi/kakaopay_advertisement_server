@@ -2,7 +2,7 @@ package com.task.kakaopayadvertisementserver.converter
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.task.kakaopayadvertisementserver.component.SpringContext
+import com.task.kakaopayadvertisementserver.config.ObjectMapperConfiguration
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 
@@ -10,9 +10,7 @@ import jakarta.persistence.Converter
 open class JsonColumnConverter<T>(
     private val objectType: TypeReference<T>,
 ) : AttributeConverter<T, String> {
-    private val objectMapper: ObjectMapper by lazy {
-        SpringContext.applicationContext.getBean(ObjectMapper::class.java)
-    }
+    private val objectMapper: ObjectMapper = ObjectMapperConfiguration().objectMapper()
 
     override fun convertToDatabaseColumn(contents: T): String {
         return objectMapper.writeValueAsString(contents)
