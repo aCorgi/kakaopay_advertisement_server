@@ -23,11 +23,11 @@ class Member(
     @Column(nullable = false, length = 200)
     val password: String,
     @Column(nullable = false, columnDefinition = "JSON")
-    @Convert(converter = KakaopayMemberAuthorityConverter::class)
+    @Convert(converter = KakaopayAuthoritySetConverter::class)
     var authorities: Set<KakaopayAuthority>,
 ) : BaseEntity()
 
 @Converter(autoApply = true)
-class KakaopayMemberAuthorityConverter : JsonColumnConverter<Set<KakaopayAuthority>>(
+class KakaopayAuthoritySetConverter : JsonColumnConverter<Set<KakaopayAuthority>>(
     object : TypeReference<Set<KakaopayAuthority>>() {},
 )

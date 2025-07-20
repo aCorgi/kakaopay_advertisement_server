@@ -29,7 +29,6 @@ class Advertisement(
     val imageUrl: String,
     @Embedded
     val exposureAt: ExposureAt,
-//    participationEligibility: ParticipationEligibility,
 ) : BaseEntity() {
     @Column(nullable = false)
     var currentParticipationCount: Int = currentParticipationCount
@@ -47,12 +46,3 @@ class Advertisement(
         }
     }
 }
-
-// @Converter(autoApply = true)
-// class BookingStateConverter : EnumColumnConverter<ParticipationEligibility>(ParticipationEligibility::class.java)
-
-// enum class ParticipationEligibility(private val description: String) {
-//    HAS_HISTORY_WITH_ADVERTISEMENT(""),
-//    REPEATED,
-//    FIRST_TIME,
-// }

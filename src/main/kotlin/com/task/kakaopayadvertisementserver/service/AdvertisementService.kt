@@ -14,6 +14,7 @@ import java.time.LocalDateTime
 @Service
 class AdvertisementService(
     private val advertisementRepository: AdvertisementRepository,
+    private val participationEligibilityService: ParticipationEligibilityService,
 ) {
     fun findByIdOrNull(id: Int): Advertisement? {
         return advertisementRepository.findByIdOrNull(id)
@@ -36,5 +37,10 @@ class AdvertisementService(
         val advertisement = request.toEntity()
 
         advertisementRepository.save(advertisement)
+        request.participationEligibilities.forEach {
+            val participationEligibility = it.toEntity(advertisement)
+
+            participationEligibilityService.create(participationEligibility)
+        }
     }
 }

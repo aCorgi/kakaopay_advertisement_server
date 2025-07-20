@@ -15,6 +15,7 @@ data class AdvertisementCreationRequest(
     val text: String,
     val imageUrl: String,
     val exposureAt: ExposureAtDto,
+    val participationEligibilities: List<ParticipationEligibilityCreationRequest>,
 ) {
     fun toEntity(): Advertisement {
         return Advertisement(

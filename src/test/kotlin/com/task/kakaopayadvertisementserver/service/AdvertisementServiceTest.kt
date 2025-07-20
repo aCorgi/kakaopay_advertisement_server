@@ -2,7 +2,9 @@ package com.task.kakaopayadvertisementserver.service
 
 import com.task.kakaopayadvertisementserver.config.UnitTestBase
 import com.task.kakaopayadvertisementserver.domain.entity.Advertisement
+import com.task.kakaopayadvertisementserver.domain.entity.ParticipationEligibilityType
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
+import com.task.kakaopayadvertisementserver.dto.ParticipationEligibilityCreationRequest
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
@@ -18,6 +20,7 @@ import org.mockito.Mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
@@ -30,15 +33,33 @@ class AdvertisementServiceTest : UnitTestBase() {
     @Mock
     private lateinit var advertisementRepository: AdvertisementRepository
 
+    @Mock
+    private lateinit var participationEligibilityService: ParticipationEligibilityService
+
     @Nested
     inner class `광고 생성` {
         @Nested
         inner class `성공` {
             @Test
-            fun `요청받은 형태의 광고를 DB 에 저장한다`() {
+            fun `요청받은 형태의 광고, 자격 요건들을 DB 에 저장한다`() {
                 // given
                 val name = "광고명"
-                val request = getMockAdvertisementCreationRequest(name = name)
+                val request =
+                    getMockAdvertisementCreationRequest(
+                        name = name,
+                        // 예시로 처음 참가하거나 10회 이상 참여한 사람들만으로 조건
+                        participationEligibilities =
+                            listOf(
+                                ParticipationEligibilityCreationRequest(
+                                    type = ParticipationEligibilityType.FIRST_TIME,
+                                    condition = null,
+                                ),
+                                ParticipationEligibilityCreationRequest(
+                                    type = ParticipationEligibilityType.REPEATED,
+                                    condition = 10,
+                                ),
+                            ),
+                    )
                 val advertisement = request.toEntity()
 
                 whenever(advertisementRepository.findByName(request.name))
@@ -50,6 +71,9 @@ class AdvertisementServiceTest : UnitTestBase() {
                 assertDoesNotThrow {
                     advertisementService.createAdvertisement(request)
                 }
+
+                verify(participationEligibilityService, times(2))
+                    .create(any())
 
                 val advertisementToSaveCaptor = argumentCaptor<Advertisement>()
                 verify(advertisementRepository)

@@ -1,6 +1,7 @@
 package com.task.kakaopayadvertisementserver.util
 
 import com.task.kakaopayadvertisementserver.dto.AdvertisementCreationRequest
+import com.task.kakaopayadvertisementserver.dto.ParticipationEligibilityCreationRequest
 import com.task.kakaopayadvertisementserver.dto.embeddable.ExposureAtDto
 import com.task.kakaopayadvertisementserver.util.Random.createRandomPositiveInteger
 import java.time.LocalDateTime
@@ -17,6 +18,7 @@ object MockDto {
                 exposureStartAt = LocalDateTime.now().minusDays(100),
                 exposureEndAt = LocalDateTime.now().plusDays(100),
             ),
+        participationEligibilities: List<ParticipationEligibilityCreationRequest> = emptyList(),
     ): AdvertisementCreationRequest {
         return AdvertisementCreationRequest(
             name = name,
@@ -25,6 +27,7 @@ object MockDto {
             text = text,
             imageUrl = imageUrl,
             exposureAt = exposureAt,
+            participationEligibilities = participationEligibilities,
         )
     }
 }
