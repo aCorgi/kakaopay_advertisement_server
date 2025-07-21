@@ -54,7 +54,7 @@ class LockServiceIT : IntegrationTestBase() {
         @Test
         fun `Lock 을 획득하지 못하면 주기적으로 retry 하는데, 그래도 획득하지 못하면 null 을 반환한다`() {
             // given
-            val lockName = "test-lock"
+            val lockName = "test-locked"
             val latch = CountDownLatch(1)
             val lock = redissonClient.getLock(lockName)
 
