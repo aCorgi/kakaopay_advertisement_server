@@ -124,6 +124,64 @@ kakaopay-advertisement-server
 
 <br>
 
+## DB 테이블 DDL
+
+```mysql
+# 회원 테이블
+CREATE TABLE `member` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `email` varchar(200) NOT NULL,
+    `password` varchar(200) NOT NULL,
+    `authorities` json NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `member_uk01` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+# 광고 테이블
+CREATE TABLE `advertisement` (
+     `id` int NOT NULL AUTO_INCREMENT,
+     `current_participation_count` int NOT NULL,
+     `max_participation_count` int NOT NULL,
+     `reward_amount` int NOT NULL,
+     `exposure_end_at` datetime NOT NULL,
+     `exposure_start_at` datetime NOT NULL,
+     `name` varchar(200) NOT NULL,
+     `image_url` varchar(500) NOT NULL,
+     `text` varchar(1000) NOT NULL,
+     `created_at` datetime NOT NULL,
+     `updated_at` datetime NOT NULL,
+     PRIMARY KEY (`id`),
+     UNIQUE KEY `advertisement_uk01` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+# 광고 참가 이력 테이블
+CREATE TABLE `advertisement_participation` (
+   `id` int NOT NULL AUTO_INCREMENT,
+   `advertisement_id` int NOT NULL,
+   `member_id` int NOT NULL,
+   `created_at` datetime NOT NULL,
+   `updated_at` datetime NOT NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `advertisement_participation_uk01` (`advertisement_id`,`member_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+# 광고 참가 자격 테이블
+CREATE TABLE `participation_eligibility` (
+    `id` int NOT NULL AUTO_INCREMENT,   
+    `advertisement_id` int NOT NULL,
+    `eligibility_condition` int DEFAULT NULL,
+    `type` varchar(255) NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `participation_eligibility_uk01` (`advertisement_id`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+<br>
+
 ## 설계 핵심 포인트
 - **Basic Auth 방식으로 Spring security 구현했습니다.**
     - Admin 과 User 두 개의 GrantedAuthority 가 존재합니다.
