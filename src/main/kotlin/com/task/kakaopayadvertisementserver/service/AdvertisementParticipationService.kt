@@ -81,7 +81,6 @@ class AdvertisementParticipationService(
             throw ClientBadRequestException("광고 참여 조건에 부합하지 않습니다.")
         }
 
-        // TODO: 어필) Redisson 분산락 (광고ID 단위)
         lockService.runWithLock(
             lockName = "participate-advertisement:${request.advertisementId}",
         ) {
@@ -106,13 +105,6 @@ class AdvertisementParticipationService(
         advertisementParticipationRepository.save(advertisementParticipation)
         advertisement.increaseParticipationCount()
 
-        /*
-            TODO: 어필) 보상 트랜잭션 관리 대신 트랜잭션 커밋 성공까지 마친 후, 포인트 지급되도록 메세지큐 발행. 메세지 리스너가 포인트 지급 처리
-            포인트 지급은 시간 차이가 발생할 수 있다.
-            그러나, 포인트 지급 서버의 이상으로 광고 참여조차 못하게 두는 것은 사용자 관점에서 좋지 않다.
-            MQ 로 포인트 지급 로깅 관리도 하면서, 미지급 시 retry 로 지급되도록 시스템이 자동으로 조치할 수 있다.
-            그와 함께, 트래픽을 분산시킬 수 있다.
-         */
         eventPublisher.publishEvent(
             AdvertisementParticipationCompletedEvent(
                 memberId = member.id,

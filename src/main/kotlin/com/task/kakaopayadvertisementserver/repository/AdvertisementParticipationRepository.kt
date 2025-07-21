@@ -16,7 +16,6 @@ interface AdvertisementParticipationRepository : JpaRepository<AdvertisementPart
         advertisement: Advertisement,
     ): AdvertisementParticipation?
 
-    // TODO: 어필) 참여 이력 생성 일시 = 참여 일시
     fun findByMemberIdAndCreatedAtBetween(
         memberId: Int,
         startAt: LocalDateTime,

@@ -19,7 +19,6 @@ class BasicAuthenticationProvider(
         val email = authentication.name
         val password = authentication.credentials.toString()
 
-        // TODO: 어필) 이상적으론 어드민과 사용자 서버 및 DB 분리, JWT 토큰 사용. 하나의 과제에서 대응하기 위해 Basic auth + 단일 테이블 활용
         memberService.findByEmailOrNull(email)
             ?.let { member ->
                 if (passwordEncoder.matches(password, member.password)) {

@@ -20,7 +20,6 @@ import jakarta.persistence.Table
     ],
 )
 class ParticipationEligibility(
-    // TODO: 어필) 광고 특성 상 N 개의 참여 자격이 존재할 수 있다.
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "advertisement_id", foreignKey = ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     val advertisement: Advertisement,

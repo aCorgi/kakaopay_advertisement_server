@@ -13,7 +13,6 @@ import jakarta.persistence.Table
 @Entity
 @Table(
     indexes = [
-        // TODO: 어필) 한 명의 사용자는 하나의 광고를 한 번만 참여할 수 있다.
         Index(name = "advertisement_participation_uk01", columnList = "advertisement_id, member_id", unique = true),
     ],
 )
