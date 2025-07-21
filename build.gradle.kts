@@ -48,9 +48,6 @@ dependencies {
     implementation("com.querydsl:querydsl-sql:$querydslVersion")
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
 
-    // phone number validation
-    implementation("com.googlecode.libphonenumber:libphonenumber:9.0.5")
-
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
