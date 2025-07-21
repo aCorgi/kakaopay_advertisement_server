@@ -6,6 +6,7 @@ import com.task.kakaopayadvertisementserver.domain.entity.ParticipationEligibili
 import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.dto.ParticipationEligibilityCreationRequest
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
+import com.task.kakaopayadvertisementserver.exception.ResourceNotFoundException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
 import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
@@ -167,6 +168,24 @@ class AdvertisementServiceTest : UnitTestBase() {
                     it.assertThat(result).hasSize(2)
                     it.assertThat(result[0]).isEqualTo(AdvertisementResponse(advertisements[0]))
                     it.assertThat(result[1]).isEqualTo(AdvertisementResponse(advertisements[1]))
+                }
+            }
+        }
+
+        @Nested
+        inner class `실패` {
+            @Test
+            fun `파라미터로 받은 유저가 존재하지 않으면 400 오류를 반환한다`() {
+                // given
+                val memberId = 1234
+                val nowAt = LocalDateTime.now()
+
+                whenever(memberService.findByIdOrNull(memberId))
+                    .thenReturn(null)
+
+                // when & then
+                assertThrows<ResourceNotFoundException> {
+                    advertisementService.findEligibleAdvertisements(memberId, nowAt)
                 }
             }
         }

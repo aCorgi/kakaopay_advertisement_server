@@ -20,9 +20,9 @@ import java.time.LocalDateTime
 @Transactional(readOnly = true)
 @Service
 class AdvertisementParticipationService(
+    private val advertisementParticipationRepository: AdvertisementParticipationRepository,
     private val eventPublisher: ApplicationEventPublisher,
     private val advertisementService: AdvertisementService,
-    private val advertisementParticipationRepository: AdvertisementParticipationRepository,
     private val participationEligibilityValidationService: ParticipationEligibilityValidationService,
     private val memberService: MemberService,
     private val lockService: LockService,

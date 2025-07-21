@@ -26,7 +26,7 @@ class ParticipationEligibility(
     val advertisement: Advertisement,
     @Column(nullable = false)
     val type: ParticipationEligibilityType,
-    @Column(nullable = true)
+    @Column(name = "eligibility_condition", nullable = true)
     val condition: Int?,
 ) : BaseEntity()
 

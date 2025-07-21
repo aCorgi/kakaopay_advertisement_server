@@ -5,11 +5,12 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/kakaopay?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: root
-    password: kakaopay
+    # prod 환경에서는 해당 값 secret value
+    password: ${KAKAOPAY_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -25,7 +26,7 @@ spring:
     host: localhost
     port: 5672
     username: root
-    password: kakaopay
+    password: ${KAKAOPAY_RABBITMQ_PASSWORD}
     listener:
       simple:
         prefetch: 1
@@ -56,7 +57,7 @@ api:
   reward-internal:
     base-url: http://localhost:8090
     username: kakaopay
-    password: blabla
+    password: ${REWARD_INTERNAL_API_BASIC_AUTH_PASSWORD}
 
 rabbit-mq:
   exchange: message-queue-exchange
