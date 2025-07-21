@@ -41,11 +41,11 @@ class ParticipationEligibilityValidationService(
                 advertisementParticipations.isEmpty()
             }
             ParticipationEligibilityType.REPEATED -> {
-                advertisementParticipations.isNotEmpty()
+                advertisementParticipations.size >= (participationEligibility.condition ?: 0)
             }
             ParticipationEligibilityType.HAS_PARTICIPATED_IN_ADVERTISEMENT -> {
                 advertisementParticipations.any { advertisementParticipation ->
-                    advertisementParticipation.advertisement.id == participationEligibility.advertisement.id
+                    advertisementParticipation.advertisement.id == participationEligibility.condition
                 }
             }
         }
