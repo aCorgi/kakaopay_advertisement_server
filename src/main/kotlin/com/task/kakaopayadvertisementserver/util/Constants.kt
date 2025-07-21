@@ -13,7 +13,7 @@ object Constants {
         const val DEFAULT_PAGE = 0L
     }
 
-    const val MAX_ADVERTISEMENT_FETCH_COUNT = 10L
+    const val MAX_ADVERTISEMENT_FETCH_COUNT = 10
 
     object Redis {
         const val LOCK_WAIT_TIME_IN_SECONDS = 5L

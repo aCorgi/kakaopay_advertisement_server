@@ -35,6 +35,9 @@ class AdvertisementServiceTest : UnitTestBase() {
     private lateinit var advertisementRepository: AdvertisementRepository
 
     @Mock
+    private lateinit var memberService: MemberService
+
+    @Mock
     private lateinit var participationEligibilityValidationService: ParticipationEligibilityValidationService
 
     @Mock
@@ -135,13 +138,28 @@ class AdvertisementServiceTest : UnitTestBase() {
                         MockAdvertisement.of(name = "광고2", maxParticipationCount = 12, rewardAmount = 500),
                         MockAdvertisement.of(name = "광고1", maxParticipationCount = 20, rewardAmount = 200),
                     )
+
+                whenever(memberService.findByIdOrNull(member.id))
+                    .thenReturn(member)
                 whenever(advertisementRepository.findAvailableAndVisibleAdvertisements(nowAt))
                     .thenReturn(advertisements)
+                whenever(
+                    participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                        advertisements[0],
+                        member,
+                    ),
+                ).thenReturn(true)
+                whenever(
+                    participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                        advertisements[1],
+                        member,
+                    ),
+                ).thenReturn(true)
 
                 // when
                 val result =
                     assertDoesNotThrow {
-                        advertisementService.findAvailableAndVisibleAdvertisements(member.id, nowAt)
+                        advertisementService.findEligibleAdvertisements(member.id, nowAt)
                     }
 
                 // then

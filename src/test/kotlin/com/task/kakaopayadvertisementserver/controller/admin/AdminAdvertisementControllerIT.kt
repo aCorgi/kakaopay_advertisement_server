@@ -3,17 +3,12 @@ package com.task.kakaopayadvertisementserver.controller.admin
 import com.task.kakaopayadvertisementserver.config.ControllerTestBase
 import com.task.kakaopayadvertisementserver.config.WithMockKakaopayMember
 import com.task.kakaopayadvertisementserver.config.security.KakaopayAuthority
-import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
-import com.task.kakaopayadvertisementserver.util.MockAdvertisement
 import com.task.kakaopayadvertisementserver.util.MockDto.getMockAdvertisementCreationRequest
 import org.junit.jupiter.api.Nested
-import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import java.time.LocalDateTime
 import kotlin.test.Test
 
 class AdminAdvertisementControllerIT : ControllerTestBase() {

@@ -26,7 +26,7 @@ class UserAdvertisementControllerIT : ControllerTestBase() {
         inner class `성공` {
             @WithMockKakaopayMember(
                 id = MEMBER_ID,
-                kakaopayAuthorities = [KakaopayAuthority.USER]
+                kakaopayAuthorities = [KakaopayAuthority.USER],
             )
             @Test
             fun `광고 목록 조회에 성공하면 200 OK 와 광고 목록을 반환한다`() {
@@ -38,7 +38,7 @@ class UserAdvertisementControllerIT : ControllerTestBase() {
                     )
                 val advertisementResponses = advertisements.map { AdvertisementResponse(it) }
 
-                whenever(advertisementService.findAvailableAndVisibleAdvertisements(eq(MEMBER_ID), any<LocalDateTime>()))
+                whenever(advertisementService.findEligibleAdvertisements(eq(MEMBER_ID), any<LocalDateTime>()))
                     .thenReturn(advertisementResponses)
 
                 // when & then

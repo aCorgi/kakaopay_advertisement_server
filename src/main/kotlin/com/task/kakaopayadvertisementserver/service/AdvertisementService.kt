@@ -6,6 +6,7 @@ import com.task.kakaopayadvertisementserver.dto.AdvertisementResponse
 import com.task.kakaopayadvertisementserver.exception.ClientBadRequestException
 import com.task.kakaopayadvertisementserver.exception.ResourceNotFoundException
 import com.task.kakaopayadvertisementserver.repository.AdvertisementRepository
+import com.task.kakaopayadvertisementserver.util.Constants.MAX_ADVERTISEMENT_FETCH_COUNT
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +24,7 @@ class AdvertisementService(
         return advertisementRepository.findByIdOrNull(id)
     }
 
-    fun findAvailableAndVisibleAdvertisements(
+    fun findEligibleAdvertisements(
         memberId: Int,
         nowAt: LocalDateTime,
     ): List<AdvertisementResponse> {
@@ -40,7 +41,9 @@ class AdvertisementService(
                 )
             }
 
-        return eligibleAdvertisements.map { AdvertisementResponse(it) }
+        return eligibleAdvertisements
+            .take(MAX_ADVERTISEMENT_FETCH_COUNT)
+            .map { AdvertisementResponse(it) }
     }
 
     @Transactional

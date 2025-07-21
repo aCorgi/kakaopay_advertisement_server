@@ -19,10 +19,10 @@ class UserAdvertisementController(
     private val advertisementService: AdvertisementService,
 ) {
     @GetMapping
-    fun findAvailableAndVisibleAdvertisements(
+    fun findEligibleAdvertisements(
         @AuthenticationPrincipal kakaopayMember: KakaopayMember,
     ): List<AdvertisementResponse> {
-        return advertisementService.findAvailableAndVisibleAdvertisements(
+        return advertisementService.findEligibleAdvertisements(
             memberId = kakaopayMember.id,
             nowAt = LocalDateTime.now(),
         )
