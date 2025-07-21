@@ -48,6 +48,9 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
     @Mock
     private lateinit var lockService: LockService
 
+    @Mock
+    private lateinit var participationEligibilityValidationService: ParticipationEligibilityValidationService
+
     @Nested
     inner class `광고 참여 등록` {
         @Nested
@@ -63,6 +66,12 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
                     .thenReturn(member)
                 whenever(advertisementService.findByIdOrNull(request.advertisementId))
                     .thenReturn(advertisement)
+                whenever(
+                    participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                        advertisement = advertisement,
+                        member = member,
+                    ),
+                ).thenReturn(true)
                 whenever(lockService.runWithLock(anyString(), any<() -> Unit>()))
                     .thenAnswer {
                         (it.arguments[1] as () -> Unit).invoke()
@@ -171,8 +180,36 @@ class AdvertisementParticipationServiceTest : UnitTestBase() {
 
                 whenever(memberService.findByIdOrNull(member.id)).thenReturn(member)
                 whenever(advertisementService.findByIdOrNull(request.advertisementId)).thenReturn(advertisement)
+                whenever(
+                    participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                        advertisement = advertisement,
+                        member = member,
+                    ),
+                ).thenReturn(true)
                 whenever(lockService.runWithLock(anyString(), any<() -> Unit>()))
                     .thenReturn(null)
+
+                // when & then
+                assertThrows<ClientBadRequestException> {
+                    advertisementParticipationService.participateAdvertisement(request, member.id)
+                }
+            }
+
+            @Test
+            fun `광고 참여 조건에 부합하지 않으면 예외를 반환한다`() {
+                // given
+                val member = MockMember.of(id = 1)
+                val advertisement = MockAdvertisement.of(id = 100, name = "광고1")
+                val request = AdvertisementParticipationRequest(advertisementId = advertisement.id)
+
+                whenever(memberService.findByIdOrNull(member.id)).thenReturn(member)
+                whenever(advertisementService.findByIdOrNull(request.advertisementId)).thenReturn(advertisement)
+                whenever(
+                    participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                        advertisement = advertisement,
+                        member = member,
+                    ),
+                ).thenReturn(false)
 
                 // when & then
                 assertThrows<ClientBadRequestException> {

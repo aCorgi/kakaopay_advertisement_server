@@ -23,6 +23,7 @@ class AdvertisementParticipationService(
     private val eventPublisher: ApplicationEventPublisher,
     private val advertisementService: AdvertisementService,
     private val advertisementParticipationRepository: AdvertisementParticipationRepository,
+    private val participationEligibilityValidationService: ParticipationEligibilityValidationService,
     private val memberService: MemberService,
     private val lockService: LockService,
 ) {
@@ -70,6 +71,15 @@ class AdvertisementParticipationService(
             ?.let {
                 throw ClientBadRequestException("이미 참여한 광고입니다.")
             }
+
+        if (
+            participationEligibilityValidationService.isParticipationEligibleByAdvertisement(
+                advertisement = advertisement,
+                member = member,
+            ).not()
+        ) {
+            throw ClientBadRequestException("광고 참여 조건에 부합하지 않습니다.")
+        }
 
         // TODO: 어필) Redisson 분산락 (광고ID 단위)
         lockService.runWithLock(

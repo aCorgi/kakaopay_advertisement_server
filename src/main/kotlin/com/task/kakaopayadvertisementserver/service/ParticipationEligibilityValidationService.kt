@@ -16,10 +16,6 @@ class ParticipationEligibilityValidationService(
     private val participationEligibilityRepository: ParticipationEligibilityRepository,
     private val advertisementParticipationRepository: AdvertisementParticipationRepository,
 ) {
-    fun findByAdvertisement(advertisement: Advertisement): List<ParticipationEligibility> {
-        return participationEligibilityRepository.findByAdvertisement(advertisement)
-    }
-
     fun isParticipationEligibleByAdvertisement(
         advertisement: Advertisement,
         member: Member,
@@ -30,6 +26,10 @@ class ParticipationEligibilityValidationService(
         return participationEligibilities.all { participationEligibility ->
             isParticipationEligible(advertisementParticipations, participationEligibility)
         }
+    }
+
+    private fun findByAdvertisement(advertisement: Advertisement): List<ParticipationEligibility> {
+        return participationEligibilityRepository.findByAdvertisement(advertisement)
     }
 
     private fun isParticipationEligible(
