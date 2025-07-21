@@ -1,7 +1,9 @@
 # 카카오페이 광고 서비스_매일 모으기 서버 과제
+
 ## 지원자 정보
 서버개발 지원자 이해원
 
+<br>
 
 ## Local 환경 테스트 (Docker 필요)
 
@@ -11,6 +13,7 @@
 docker compose up -d
 ```
 
+<br>
 
 ## tech stack
 -   kotlin : 1.9.25
@@ -40,13 +43,14 @@ docker compose up -d
 - redisson
 - springdoc-openapi-starter-webmvc-ui : swagger ui 를 사용하기 위함
 
+<br>
 
 ## 디렉토리 구조
 
 **spring MVC**
 
 ```
-autoever-security
+kakaopay-advertisement-server
 ├─ README.md
 ├─ docker-compose.yml
 ├─ ...
@@ -112,10 +116,13 @@ autoever-security
 -   service : 서비스 관련
 -   util : 확장 함수, constant 등 유틸성
 
+<br>
 
 ## 시스템 아키텍쳐
+<img width="662" height="646" alt="image" src="https://github.com/user-attachments/assets/b75c75ef-5ddb-4fe6-a357-5a6b8bc629de" />
 
 
+<br>
 
 ## 설계 핵심 포인트
 - **Basic Auth 방식으로 Spring security 구현했습니다.**
@@ -160,11 +167,13 @@ autoever-security
     - 광고 데이터의 참여 횟수 counting 이후 lock 을 반환합니다.
         - 도중 오류가 발생하더라도, TTL 이 설정되어 있어 race condition 이 발생하지 않습니다.
 
+<br>
 
 ## API 명세서
-서버를 띄우면 swagger UI 에 접근 가능합니다.
+서버를 띄우면 swagger UI 에 접근 가능합니다. <br>
 http://localhost:8080/v1/swagger-ui/index.html
 
+<br>
 
 ## API 로직 설명
 1. **(어드민) 광고 등록 API**
