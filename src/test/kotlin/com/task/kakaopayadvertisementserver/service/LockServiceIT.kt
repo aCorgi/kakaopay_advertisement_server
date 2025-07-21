@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 import kotlin.test.Test
 
 class LockServiceIT : IntegrationTestBase() {
@@ -45,16 +47,28 @@ class LockServiceIT : IntegrationTestBase() {
 
         @DisplayName(
             """
-            $LOCK_WAIT_TIME_IN_SECONDS 기간동안 기다리며 retry 한다.
-            $LOCK_LEASE_TIME_IN_SECONDS 기간동안 lock ttl 이 걸린다.
+            $LOCK_WAIT_TIME_IN_SECONDS 초 동안 기다리며 retry 한다.
+            $LOCK_LEASE_TIME_IN_SECONDS 초 동안 lock ttl 이 걸린다.
         """,
         )
         @Test
         fun `Lock 을 획득하지 못하면 주기적으로 retry 하는데, 그래도 획득하지 못하면 null 을 반환한다`() {
             // given
             val lockName = "test-lock"
+            val latch = CountDownLatch(1)
             val lock = redissonClient.getLock(lockName)
-            lock.tryLock(LOCK_WAIT_TIME_IN_SECONDS, LOCK_LEASE_TIME_IN_SECONDS, TimeUnit.SECONDS) // Simulate lock already acquired
+
+            thread(start = true) {
+                try {
+                    lock.lock(LOCK_WAIT_TIME_IN_SECONDS, TimeUnit.SECONDS)
+                    latch.countDown()
+                } finally {
+                    Thread.sleep(LOCK_WAIT_TIME_IN_SECONDS * 1000L)
+                    lock.unlock()
+                }
+            }
+
+            latch.await()
 
             // when
             val result =
@@ -64,7 +78,6 @@ class LockServiceIT : IntegrationTestBase() {
 
             // then
             assertThat(result).isNull()
-            lock.unlock()
         }
     }
 }

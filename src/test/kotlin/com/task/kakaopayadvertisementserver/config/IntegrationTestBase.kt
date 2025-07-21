@@ -13,6 +13,7 @@ import org.springframework.amqp.core.AmqpAdmin
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -48,6 +49,9 @@ abstract class IntegrationTestBase : MockWebServerTestBase() {
 
     @Autowired
     protected lateinit var rabbitMQProperties: RabbitMQProperties
+
+    @Autowired
+    protected lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @MockitoSpyBean
     protected lateinit var messageQueueConsumer: MessageQueueConsumer
