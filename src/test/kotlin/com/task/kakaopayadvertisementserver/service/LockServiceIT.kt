@@ -63,7 +63,7 @@ class LockServiceIT : IntegrationTestBase() {
                     lock.lock(LOCK_WAIT_TIME_IN_SECONDS, TimeUnit.SECONDS)
                     latch.countDown()
                 } finally {
-                    Thread.sleep(LOCK_WAIT_TIME_IN_SECONDS * 1000L)
+                    Thread.sleep((LOCK_WAIT_TIME_IN_SECONDS + 5) * 1000L)
                     lock.unlock()
                 }
             }
